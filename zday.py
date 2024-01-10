@@ -1,28 +1,21 @@
-'''#100DaysOfPython Day16'''
-# pylint: disable=global-variable-not-assigned
-# pylint: disable=wildcard-import
-# pylint: disable=unused-wildcard-import
-from prettytable import PrettyTable
-from data.art import *
-from data.game_data import *
+#initialize: set values to starting value. Constructor
+class User:
+    def __init__(self, user_id, username):
+        print("new user created")
+        self.id = user_id
+        self.username = username
+        
 
+user_1 = User("001","Johnathon")
+user_2 = User("002", "Mary")
 
-#import turtle
-from turtle import Screen, Turtle
-from random import randint, choice
+user_1.username = "Johnathon"
 
-# make a basic turtle movement
-tim = Turtle()
-tim.shape("turtle")
-tim.color("DarkSeaGreen4")
-tim.forward(100)
+user_1.username = "Mary"
 
-my_screen = Screen()
-print(my_screen.canvheight)
-my_screen.exitonclick()
-
-table = PrettyTable()
-    
-print(table)
+print(user_1.username) 
+print(user_2.username) 
+print(user_1.id) 
+print(user_2.id) 
 
 
