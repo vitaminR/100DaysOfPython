@@ -41,4 +41,8 @@ print("are you ready to play Quiznite?")
 
 # print(question_bank)
 quiz = QuizBrain(question_bank)
-quiz.next_question()
+while quiz.still_has_questions():
+
+    quiz.next_question()
+    
+print(f"you are done, your total score is {quiz.score}/12")
