@@ -1,0 +1,8 @@
+{
+    "[json]": {
+        "editor.defaultFormatter": "Meezilla.json"
+    },
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    }
+}

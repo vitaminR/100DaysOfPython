@@ -1,7 +1,6 @@
-import random
 from question_model import Question
-from  data import question_data
 from quiz_brain import QuizBrain
+from data import question_data
 
 
 # print(answer["answer"])
@@ -21,7 +20,6 @@ from quiz_brain import QuizBrain
 # print(len(question_data))
 
 
-    
 #     print()(0,len(question_data)-1)]["answer"]
 # print(question["text"])
 # new_question
@@ -32,9 +30,8 @@ from quiz_brain import QuizBrain
 question_bank = []
 
 for q in question_data:
-    
-    new_question = Question(q["text"],q["answer"])
-    question_bank.append(new_question)   
+    new_question = Question(q["question"], q["correct_answer"])
+    question_bank.append(new_question)
 
 
 print("are you ready to play Quiznite?")
@@ -42,7 +39,6 @@ print("are you ready to play Quiznite?")
 # print(question_bank)
 quiz = QuizBrain(question_bank)
 while quiz.still_has_questions():
-
     quiz.next_question()
-    
+
 print(f"you are done, your total score is {quiz.score}/12")
