@@ -1,9 +1,10 @@
 from turtle import Turtle, Screen
 import random
+import math
 
 # screen
 screen = Screen()
-screen.setup(1000, 800)
+screen.setup(1100, 1100)
 screen.bgcolor("black")
 
 # Move the window to the left side of the screen
@@ -38,58 +39,29 @@ screen.tracer(1, 0)
 player.color("white")
 
 
-# Function to draw a fractal spiral polygon
-def draw_fractal_spiral_polygon(player, sides, size, depth):
-    angle = 360 / sides
-    if depth == 0:
-        for _ in range(sides):
-            player.forward(size)
-            player.right(angle)
-    else:
-        for _ in range(sides):
-            draw_fractal_spiral_polygon(player, sides, size / 2, depth - 1)
-            player.forward(size)
-            player.right(
-                angle + 5
-            )  # Add a slight rotation after each side to create a spiral effect
+player = Turtle()
+player.speed(0)  # Set the speed to the maximum
+player.color("white")
 
-
-# Draw a series of interconnected fractal spiral polygons
-for i in range(50):  # This loop creates 50 polygons
-    sides = i % 7 + 3  # The number of sides varies from 3 to 9
-    size = i * 5  # The size of the polygons increases more rapidly for each polygon
-    player.penup()
-    player.forward(i * 2)  # The player moves forward more for each polygon
-    player.pendown()
-    player.color(
-        random.choice(color_list_with_names)[1]
-    )  # Select a random color for each polygon
-    draw_fractal_spiral_polygon(
-        player, sides, size, 2
-    )  # The depth of the fractal polygons is 2
-    player.right(7)  # Rotate the player more after each polygon
-
-# Draw a star of stars in a circle around the canvas
-for i in range(36):  # This loop creates the outer star
+# Draw a spiral of stars
+for i in range(206):  # This loop creates 206 stars
     player.penup()
     player.goto(
-        200 * math.cos(i * 10 * math.pi / 180), 200 * math.sin(i * 10 * math.pi / 180)
-    )  # Move the player in a circle
+        (i * 2) * math.cos(i * 5 * math.pi / 180),
+        (i * 2) * math.sin(i * 5 * math.pi / 180),
+    )  # Move the player in a spiral
     player.pendown()
     player.color(
         random.choice(color_list_with_names)[1]
     )  # Select a random color for each star
     for _ in range(5):  # This loop creates the inner star
-        player.forward(100)
+        player.forward(i / 2 + 15)  # The size of the stars increases for each star
         player.right(144)  # Rotate the player to create a star shape
-    player.penup()
-    player.home()  # Move the player back to the center
-    player.right(10)  # Rotate the player slightly after each star
-    player.pendown()
+    player.right(222.492235)  # Rotate the player by the golden angle after each star
+
 
 # Set the function to be called when you click on the screen
-turtle.Screen().exitonclick()
-
+Screen().exitonclick()
 
 # # Draw a star of stars
 # for _ in range(36):  # This loop creates the outer star
