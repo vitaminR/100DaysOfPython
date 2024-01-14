@@ -18,8 +18,9 @@ class Game:
 
             # Detect collision with food
             if self.snake.detect_collision_with_food(self.food):
+                food_color = self.food.get_color()
                 self.food.refresh()
-                self.snake.extend()
+                self.snake.extend(food_color)
                 self.scoreboard.increase_score()
 
             # Detect collision with wall

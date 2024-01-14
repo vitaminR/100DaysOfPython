@@ -1,5 +1,6 @@
 import random
 from turtle import Turtle
+from art import COLORS
 
 
 class Food(Turtle):
@@ -8,7 +9,7 @@ class Food(Turtle):
         self.shape("circle")
         self.penup()
         self.shapesize(stretch_len=0.5, stretch_wid=0.5)
-        self.color("red")
+        self.color(random.choice(list(COLORS.values())))
         self.speed("fastest")
         self.move_to_new_location()
         self.refresh()
@@ -22,3 +23,8 @@ class Food(Turtle):
     def refresh(self):
         """Refresh the food by moving it to a new location."""
         self.move_to_new_location()
+        self.color(random.choice(list(COLORS.values())))
+
+    def get_color(self):
+        """Return the color of the food."""
+        return self.fillcolor()

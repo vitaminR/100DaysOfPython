@@ -2,24 +2,12 @@
 
 from turtle import Turtle
 import random
+import art
 
 from food import Food
 
 MOVE_DISTANCE = 20
 STARTING_POSITIONS = [(0, 0), (-20, 0), (-40, 0)]
-
-COLORS = {
-    "Pinkish": "#f2668b",
-    "Light-Blue": "#23c7d9",
-    "Mint-Green": "#48d9a4",
-    "Sunflower-Yellow": "#f2bf27",
-    "Off-White": "#f2f1df",
-    "Light-Pinkish": "#f2889b",
-    "Lighter-Blue": "#33d7e9",
-    "Light-Mint-Green": "#58e9b4",
-    "Light-Sunflower-Yellow": "#f2cf37",
-    "Light-Off-White": "#f2f1ef",
-}
 
 
 class Snake:
@@ -40,7 +28,7 @@ class Snake:
         new_segment.color("black")
         new_segment.penup()
         new_segment.goto(position)
-        new_segment.fillcolor(random.choice(list(COLORS.values())))
+        new_segment.fillcolor(random.choice(list(art.COLORS.values())))
         self.segments.append(new_segment)
 
     def move(self):
@@ -74,7 +62,7 @@ class Snake:
         if self.segments[0].heading() != 180:
             self.segments[0].setheading(0)  # Heading east
 
-    def extend(self):
+    def extend(self, color):
         """Add a new segment to the snake."""
         # Deepcopy the last segment in the snake
         new_segment = self.segments[-1].clone()
@@ -82,25 +70,8 @@ class Snake:
         new_segment.goto(self.segments[-1].position())
         new_segment.showturtle()
 
-        # Get the color of the last segment
-        last_segment_color = self.segments[-1].color()[0]
-
-        # Get the list of colors from the COLORS dictionary
-        color_list = list(COLORS.values())
-
-        # Find the index of the last segment's color in the color_list
-        color_index = (
-            color_list.index(last_segment_color)
-            if last_segment_color in color_list
-            else None
-        )
-
-        # If the color was found in the list, use the next color for the new segment
-        # If the color was not found in the list, or it's the last color in the list, use the first color
-        if color_index is not None and color_index < len(color_list) - 1:
-            new_segment.color(color_list[color_index + 1])
-        else:
-            new_segment.color(color_list[0])
+        # Set the color of the new segment to the color of the food
+        new_segment.color(color)
 
         # Add the new segment to the list of segments
         self.segments.append(new_segment)
