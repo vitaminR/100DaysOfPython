@@ -1,22 +1,60 @@
 """main module for the Snake Game"""
-from turtle import Screen
+import tkinter as tk
+from turtle import Screen, Terminator
 import time
 from game import Game
 from snake import Snake
 from food import Food
 from scoreboard import Scoreboard
+from wall import create_wall
+
+
+def CustomScreen():
+    screen = Screen()
+
+    def window_is_open():
+        try:
+            screen.getcanvas()
+            return True
+        except Terminator:
+            return False
+
+    screen.window_is_open = window_is_open
+    return screen
 
 
 def main():
-    # Set up the screen
-    screen = Screen()
-    screen.bgcolor("black")
-    screen.setup(width=1200, height=1200)
-    screen.title("Snake Game")
-    screen.tracer(0)
+    # Create the turtle screen
+    screen = CustomScreen()
 
-    # Create
-    snake = Snake()
+    screen.bgcolor("black")
+
+    # Get the size of the monitor
+    # Create a hidden root window
+    root = tk.Tk()
+    root.withdraw()
+
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+
+    # Calculate the position of the turtle window
+    turtle_window_width = 1200  # replace with the width of your turtle window
+    turtle_window_height = 900  # replace with the height of your turtle window
+    position_x = (screen_width - turtle_window_width) // 2
+    position_y = (screen_height - turtle_window_height) // 2
+
+    # Set the position of the turtle window
+    root = screen.getcanvas().winfo_toplevel()
+    root.geometry(
+        f"{turtle_window_width}x{turtle_window_height}+{position_x}+{position_y}"
+    )
+
+    wall_width, wall_height = create_wall(turtle_window_width, turtle_window_height)
+
+    # Create the snake
+    snake = Snake(wall_width, wall_height)
+
+    # Create the food
     food = Food()
     scoreboard = Scoreboard()
     game = Game(snake, food, scoreboard)
@@ -39,7 +77,8 @@ def main():
         screen.update()
         time.sleep(0.1)
 
-        snake.move()
+        if game.is_game_on:
+            snake.move()
 
         # Detect collision with food
         if snake.detect_collision_with_food(food):
@@ -49,13 +88,15 @@ def main():
 
         # Detect collision with wall
         if snake.detect_collision_with_wall():
-            game.is_on = False
+            game.is_game_on = False
             game.scoreboard.game_over()
+            snake.stop()
 
         # Detect collision with tail
         if snake.detect_collision_with_tail():
-            game.is_on = False
+            game.is_game_on = False
             game.scoreboard.game_over()
+            snake.stop()
 
     # Keep the window open until it's clicked
     screen.exitonclick()

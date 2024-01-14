@@ -11,8 +11,7 @@ class Game:
         self.is_game_on = False
 
     def start_game(self):
-        self.is_game_on = True
-        while self.is_game_on:
+        while self.screen.window_is_open():  # Check if the window is open
             self.screen.update()
             time.sleep(0.1)
             self.snake.move()
