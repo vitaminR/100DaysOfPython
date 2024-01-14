@@ -1,27 +1,25 @@
-# from turtle import Turtle, Screen
-from turtle import *
+"""Snake class for the Snake Game"""
+
+from turtle import Turtle
 import random
-import math
-import time
-from turtle import Screen
 
-# from xmain import
+from food import Food
 
+MOVE_DISTANCE = 20
+STARTING_POSITIONS = [(0, 0), (-20, 0), (-40, 0)]
 
-color_list = [
-    (1, "Pinkish", "#f2668b"),
-    (2, "Light-Blue", "#23c7d9"),
-    (3, "Mint-Green", "#48d9a4"),
-    (4, "Sunflower-Yellow", "#f2bf27"),
-    (5, "Off-White", "#f2f1df"),
-    (6, "Light-Pinkish", "#f2889b"),
-    (7, "Lighter-Blue", "#33d7e9"),
-    (8, "Light-Mint-Green", "#58e9b4"),
-    (9, "Light-Sunflower-Yellow", "#f2cf37"),
-    (10, "Light-Off-White", "#f2f1ef"),
+COLORS = [
+    "#f2668b",  # Pinkish
+    "#23c7d9",  # Light-Blue
+    "#48d9a4",  # Mint-Green
+    "#f2bf27",  # Sunflower-Yellow
+    "#f2f1df",  # Off-White
+    "#f2889b",  # Light-Pinkish
+    "#33d7e9",  # Lighter-Blue
+    "#58e9b4",  # Light-Mint-Green
+    "#f2cf37",  # Light-Sunflower-Yellow
+    "#f2f1ef",  # Light-Off-White
 ]
-
-starting_pos = [(0, 0), (-20, 0), (-40, 0)]
 
 
 class Snake:
@@ -31,14 +29,25 @@ class Snake:
         self.head = self.segments[0]
 
     def create_snake(self):
-        # Create initial snake segments
-        for i, pos in enumerate(starting_pos):
-            new_segment = Turtle("square")
-            new_segment.color(color_list[i][2])
-            new_segment.penup()
-            new_segment.goto(pos)
-            self.segments.append(new_segment)
-            time.sleep(1)
+        for position in STARTING_POSITIONS:
+            self.add_segment(position)
+
+    def add_segment(self, position):
+        new_segment = Turtle("square")
+        new_segment.penup()
+        new_segment.goto(position)
+
+        # Choose a random color for the new segment
+        new_segment.fillcolor(random.choice(COLORS))
+
+        self.segments.append(new_segment)
+
+    def move(self):
+        for seg_num in range(len(self.segments) - 1, 0, -1):
+            new_x = self.segments[seg_num - 1].xcor()
+            new_y = self.segments[seg_num - 1].ycor()
+            self.segments[seg_num].goto(new_x, new_y)
+        self.segments[0].forward(MOVE_DISTANCE)
 
     # Function to change snake direction upwards
     def go_up(self):
@@ -59,3 +68,60 @@ class Snake:
     def go_right(self):
         if self.segments[0].heading() != 180:
             self.segments[0].setheading(0)  # Heading east
+
+    def extend(self):
+        # Add a new segment to the snake
+        new_segment = Turtle("square")
+        new_segment.penup()
+
+        # Get the color of the last segment
+        last_segment_color = self.segments[-1].fillcolor()
+
+        # Find the index of this color in the color list
+        color_index = next(
+            (
+                i
+                for i, (_, _, color) in enumerate(COLORS)
+                if color == last_segment_color
+            ),
+            None,
+        )
+
+        # If the color was found in the list, use the next color for the new segment
+        if color_index is not None and color_index < len(COLORS) - 1:
+            new_segment.color(COLORS[color_index + 1][2])
+        else:
+            # If the color was not found in the list, use the first color
+            new_segment.color(COLORS[0][2])
+
+        # Move the new segment to the position of the last segment
+        new_segment.goto(self.segments[-1].position())
+
+        # Add the new segment to the list of segments
+        self.segments.append(new_segment)
+
+    def detect_collision_with_food(self, food):
+        """returns True if the snake head is within 15 pixels of the food turtle, otherwise returns False"""
+        if self.head.distance(food) < 15:
+            return True
+        else:
+            return False
+
+    def detect_collision_with_wall(self):
+        """returns True if the snake head is outside the screen, otherwise returns False"""
+        if (
+            self.head.xcor() > 560
+            or self.head.xcor() < -560
+            or self.head.ycor() > 560
+            or self.head.ycor() < -560
+        ):
+            return True
+        else:
+            return False
+
+    def detect_collision_with_tail(self):
+        """returns True if the snake head collides with any of the snake's tail segments, otherwise returns False"""
+        for segment in self.segments[1:]:
+            if self.head.distance(segment) < 10:
+                return True
+        return False

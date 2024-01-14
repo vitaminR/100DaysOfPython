@@ -1,5 +1,5 @@
-from turtle import Turtle
 import random
+from turtle import Turtle
 
 
 class Food(Turtle):
@@ -8,11 +8,15 @@ class Food(Turtle):
         self.shape("circle")
         self.penup()
         self.shapesize(stretch_len=0.5, stretch_wid=0.5)
-        self.color("blue")
         self.speed("fastest")
-        self.refresh()
+        self.move_to_new_location()
+
+    def move_to_new_location(self):
+        """Move the food to a new random location on the screen."""
+        random_x = random.randint(-560, 560)
+        random_y = random.randint(-560, 560)
+        self.goto(random_x, random_y)
 
     def refresh(self):
-        random_x = random.randint(-280, 280)
-        random_y = random.randint(-280, 280)
-        self.goto(random_x, random_y)
+        """Refresh the food by moving it to a new location."""
+        self.move_to_new_location()
