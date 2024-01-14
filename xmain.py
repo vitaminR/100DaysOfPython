@@ -15,12 +15,7 @@ screen = Screen()
 screen.setup(width=600, height=600)
 screen.bgcolor("black")
 screen.tracer(0, 0)
-# Bind keys to movement functions
-screen.listen()
-screen.onkey(Snake.move.go_up, "w")
-screen.onkey(move.go_down, "s")
-screen.onkey(move.go_left, "a")
-screen.onkey(move.go_right, "d")
+
 
 # Move the window to the left side of the screen
 root = screen.getcanvas().winfo_toplevel()
@@ -43,5 +38,15 @@ class Game:
                 self.snake.segments[seg_num].goto(new_x, new_y)
             self.snake.segments[0].forward(20)
 
+
+game = Game()
+
+
+# Bind keys to movement functions
+screen.listen()
+screen.onkey(game.snake.go_up, "w")
+screen.onkey(move.go_down, "s")
+screen.onkey(move.go_left, "a")
+screen.onkey(move.go_right, "d")
 
 screen.exitonclick()
