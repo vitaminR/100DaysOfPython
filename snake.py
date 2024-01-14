@@ -3,6 +3,7 @@ from turtle import *
 import random
 import math
 import time
+from turtle import Screen
 
 # from xmain import
 
@@ -33,29 +34,28 @@ class Snake:
         # Create initial snake segments
         for i, pos in enumerate(starting_pos):
             new_segment = Turtle("square")
-            new_segment.color(color_list[i][1])
+            new_segment.color(color_list[i][2])
             new_segment.penup()
             new_segment.goto(pos)
             self.segments.append(new_segment)
             time.sleep(1)
 
-    def move(self):
-        # Function to change snake direction upwards
-        def go_up():
-            if self.segments[0].heading() != 270:  # Prevent backward movement
-                self.segments[0].setheading(90)  # Heading north
+    # Function to change snake direction upwards
+    def go_up(self):
+        if self.segments[0].heading() != 270:  # Prevent backward movement
+            self.segments[0].setheading(90)  # Heading north
 
-        # Function to change snake direction downwards
-        def go_down():
-            if self.segments[0].heading() != 90:
-                self.segments[0].setheading(270)  # Heading south
+    # Function to change snake direction downwards
+    def go_down(self):
+        if self.segments[0].heading() != 90:
+            self.segments[0].setheading(270)  # Heading south
 
-        # Function to change snake direction leftwards
-        def go_left():
-            if self.segments[0].heading() != 0:
-                self.segments[0].setheading(180)  # Heading west
+    # Function to change snake direction leftwards
+    def go_left(self):
+        if self.segments[0].heading() != 0:
+            self.segments[0].setheading(180)  # Heading west
 
-        # Function to change snake direction rightwards
-        def go_right():
-            if self.segments[0].heading() != 180:
-                self.segments[0].setheading(0)  # Heading east
+    # Function to change snake direction rightwards
+    def go_right(self):
+        if self.segments[0].heading() != 180:
+            self.segments[0].setheading(0)  # Heading east
