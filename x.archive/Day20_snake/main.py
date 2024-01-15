@@ -1,6 +1,6 @@
 # main.py
 from turtle import Screen, TurtleGraphicsError
-from game import Game
+from zgame import Game
 from wall import create_wall  # Ensure this module exists
 
 
