@@ -1,3 +1,6 @@
+# art.py
+# This module contains artistic resources such as color palettes used in the game.
+
 COLORS = {
     "Pinkish": "#f2668b",
     "Light-Blue": "#23c7d9",
