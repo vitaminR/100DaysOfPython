@@ -1,49 +1,50 @@
-# main.py
-"""main module for pong game"""
-from turtle import Screen, TurtleGraphicsError
-from game import Game
-from gear import Paddle, Ball
-
-screen = Screen()
+from turtle import Turtle, Screen
 
 
-def window_closed(screen):
-    try:
-        screen.getcanvas()
-        return False
-    except TurtleGraphicsError:
-        return True
+class Player(Turtle):
+    def __init__(self, x, y):
+        super().__init__()
+        self.shape("turtle")
+        self.color("green")
+        self.penup()
+        self.goto(x, y)
+        self.setheading(90)
+
+    def move_up(self):
+        self.forward(20)
+
+    def move_left(self):
+        new_x = self.xcor() - 20
+        self.goto(new_x, self.ycor())
+
+    def move_right(self):
+        new_x = self.xcor() + 20
+        self.goto(new_x, self.ycor())
+
+    def reset(self):
+        self.goto(0, -280)
+
+    def is_at_finish_line(self):
+        if self.ycor() > 280:
+            return True
+        else:
+            return False
 
 
 def main():
     screen = Screen()
-    screen.setup(width=1400, height=900)
     screen.bgcolor("black")
-    screen.title("Pong")
+    screen.tracer(0)
 
-    # Create the left paddle
-    left_paddle = Paddle(screen, "left", "w", "s")
+    player = Player(0, -280)
 
-    # Create the right paddle
-    right_paddle = Paddle(screen, "right", "Up", "Down")
+    screen.listen()
+    screen.onkey(player.move_up, "Up")
+    screen.onkey(player.move_left, "Left")
+    screen.onkey(player.move_right, "Right")
 
-    ball = Ball()
-
-    # Set initial positions
-    left_paddle.loc()
-    right_paddle.loc()
-
-    # Create a new game
-    game = Game(left_paddle, right_paddle)
-
-    game.start()
-
-    while game.is_game_on and not window_closed(screen):
-        left_paddle.paddle_move()
-        right_paddle.paddle_move()
-        game.play_game()
-
-    screen.exitonclick()
+    while True:
+        screen.update()
 
 
 if __name__ == "__main__":
