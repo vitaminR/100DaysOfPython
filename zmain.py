@@ -1,1 +1,4 @@
-new_list = [new_item for item in list]
+name = "Johnathon"
+new_list = [letter for letter in name]
+
+print(new_list)
