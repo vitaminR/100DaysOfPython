@@ -15,13 +15,24 @@
 # print(short_names)
 
 # Open both files and read their content
-with open("file1.txt", "r") as file:
-    file1_content = file.read().splitlines()
+# with open("file1.txt", "r") as file:
+#     file1_content = file.read().splitlines()
 
-with open("file2.txt", "r") as file:
-    file2_content = file.read().splitlines()
+# with open("file2.txt", "r") as file:
+#     file2_content = file.read().splitlines()
 
-# Find common numbers
-common_numbers = [num for num in file1_content if num in file2_content]
+# # Find common numbers
+# common_numbers = [num for num in file1_content if num in file2_content]
 
-print(f"Common numbers: {common_numbers}")
+# print(f"Common numbers: {common_numbers}")
+
+names = ["Alex", "Beth", "Caroline", "Dave", "Eleanor", "Freddie"]
+import random
+
+students_scores = {student: random.randint(1, 100) for student in names}
+
+print(students_scores)
+
+passed = {student: score for (student, score) in students_scores.items() if score > 59}
+
+print(passed)
