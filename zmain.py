@@ -26,13 +26,53 @@
 
 # print(f"Common numbers: {common_numbers}")
 
-names = ["Alex", "Beth", "Caroline", "Dave", "Eleanor", "Freddie"]
-import random
+# names = ["Alex", "Beth", "Caroline", "Dave", "Eleanor", "Freddie"]
+# import random
 
-students_scores = {student: random.randint(1, 100) for student in names}
+# students_scores = {student: random.randint(1, 100) for student in names}
 
-print(students_scores)
+# print(students_scores)
 
-passed = {student: score for (student, score) in students_scores.items() if score > 59}
+# passed = {student: score for (student, score) in students_scores.items() if score > 59}
 
-print(passed)
+# print(passed)
+
+
+# sentence = "What is the Airspeed Velocity of an Unladen Swallow?"
+# # 🚨 Don't change code above 👆
+# # Write your code below 👇
+# word_list = sentence.split()
+
+# words = {word: len(word) for (word) in word_list}
+
+# print(words)
+
+# # students_scores = {student: random.randint(1, 100) for student in names}
+
+# # print(students_scores)
+
+# # passed = {student: score for (student, score) in students_scores.items() if score > 59}
+
+# # print(passed)
+
+
+# # print(result)
+
+
+weather_c = {
+    "Monday": 12,
+    "Tuesday": 14,
+    "Wednesday": 15,
+    "Thursday": 14,
+    "Friday": 21,
+    "Saturday": 22,
+    "Sunday": 24,
+}
+# 🚨 Don't change code above 👆
+
+
+# Write your code 👇 below:
+
+weather_f = {day: (temp_c * 9 / 5) + 32 for (day, temp_c) in weather_c.items()}
+
+print(weather_f)
