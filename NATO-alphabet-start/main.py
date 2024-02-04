@@ -8,6 +8,12 @@ def get_phonetic_dict(csv_file):
     return {phonetic.letter[i]: phonetic.code[i] for i in range(len(phonetic))}
 
 
-user_input = "Give me a word to spell phonetically:\n"
+# print(get_phonetic_dict("nato_phonetic_alphabet.csv"))
 
-print(get_phonetic_dict("nato_phonetic_alphabet.csv"))
+
+user_input = input("Give me a word to spell phonetically:\n")
+
+# split the word into letters
+user_input = user_input.upper()
+for letter in user_input:
+    print(f"{letter} : {get_phonetic_dict('nato_phonetic_alphabet.csv')[letter]}")
