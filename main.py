@@ -39,4 +39,17 @@ my_button = Button(text="Add", command=lambda: add_unlimited(1, 3, 4, 6, 9))
 my_button.pack(expand=True, side="left")
 
 
-window.mainloop()
+def calculate(n, **kwargs):
+
+    print(kwargs)
+    for key, value in kwargs.items():
+        print(key, value)
+    n += kwargs["add"]
+    n *= kwargs["multiply"]
+    n /= kwargs["divide"]
+    n -= kwargs["subtract"]
+
+    print(n)
+
+
+calculate(2, add=3, multiply=5, divide=8, subtract=1)
