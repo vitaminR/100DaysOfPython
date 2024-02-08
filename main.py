@@ -45,6 +45,7 @@ def calculate(n, **kwargs):
     for key, value in kwargs.items():
         print(key, value)
     n += kwargs["add"]
+    print(n)
     n *= kwargs["multiply"]
     n /= kwargs["divide"]
     n -= kwargs["subtract"]
