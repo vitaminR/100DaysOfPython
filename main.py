@@ -42,10 +42,11 @@ my_button.pack(expand=True, side="left")
 def calculate(n, **kwargs):
 
     print(kwargs)
-    for key, value in kwargs.items():
-        print(key, value)
+    # for key, value in kwargs.items():
+    #     print(key, value)
+    i = n
     n += kwargs["add"]
-    print(n)
+    print(f"{i} + {kwargs['add']} = {n}")
     n *= kwargs["multiply"]
     n /= kwargs["divide"]
     n -= kwargs["subtract"]
@@ -54,3 +55,39 @@ def calculate(n, **kwargs):
 
 
 calculate(2, add=3, multiply=5, divide=8, subtract=1)
+
+
+class Car:
+    def __init__(self, **kw):
+        self.make = kw.get("make")
+        self.model = kw.get("model")
+        self.color = kw.get("color")
+        self.seats = kw.get("seats")
+
+
+car = Car(make="Nissan", model="GT-R", color="Blue", seats=2)
+print(car.make)
+
+
+# def all_aboard(a, *args, **kw):
+#     print(a, args, kw)
+
+
+# all_aboard(4, 7, 3, 0, x=10, y=64)
+# # prints: 4 (7, 3, 0) {'x': 10, 'y': 64}
+
+
+# #Lable
+# my_label = Label(text="I am a label", font=("Arial", 24, "bold"))
+# my_label.pack()
+
+# my_label["text"] = "New Text"
+# my_label.config(text="New Text")
+
+# #button
+# def button_clicked():
+#     my_label["text"] = input.get()
+
+
+# Run the application
+window.mainloop()
