@@ -1,6 +1,7 @@
 # Day 27 GUI
 
-from tkinter import Tk, Button, Label
+from tkinter import Tk, Label, Button, Entry, CENTER
+
 
 # Create a window
 window = Tk()
@@ -88,6 +89,9 @@ print(car.make)
 # def button_clicked():
 #     my_label["text"] = input.get()
 
+# Entry field
+input = Entry(window, width=10)
+input.pack(anchor=CENTER)
 
 # Run the application
 window.mainloop()
