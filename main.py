@@ -1,7 +1,7 @@
 # Day 27 GUI
 
 from tkinter import Tk, Label, Button, Entry, CENTER
-
+import re
 
 # Create a window
 window = Tk()
@@ -90,8 +90,42 @@ print(car.make)
 #     my_label["text"] = input.get()
 
 # Entry field
-input = Entry(window, width=10)
-input.pack(anchor=CENTER)
+
+
+# Label for input
+input_label = Label(window, text="Input", font=("Arial", 24, "bold"))
+input_label.pack()
+
+# Entry field
+input_field = Entry(window, width=10)
+input_field.pack(anchor=CENTER)
+
+# Label for total
+total_label = Label(window, text="Total", font=("Arial", 24, "bold"))
+total_label.pack()
+
+
+# Button
+def button_clicked():
+    input_text = input_field.get().replace(" ", "")
+    words = re.split("(\D)", input_text)
+    print(words)
+    total = float(words[0])
+    for i in range(1, len(words), 2):
+        if words[i] == "+":
+            total += float(words[i + 1])
+        elif words[i] == "-":
+            total -= float(words[i + 1])
+        elif words[i] == "*":
+            total *= float(words[i + 1])
+        elif words[i] == "/":
+            total /= float(words[i + 1])
+    total_label["text"] = "Total: " + str(total)
+
+
+my_button = Button(window, text="Calculate", command=button_clicked)
+my_button.pack()
+
 
 # Run the application
 window.mainloop()
