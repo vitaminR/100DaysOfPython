@@ -27,6 +27,7 @@ window.title("Neighborhood Survey")
 # - 2.2 Sets the title of the main window.
 window.minsize(width=1000, height=800)
 # - 2.3 Defines the minimum size of the window to ensure all elements fit.
+window.config(padx=20, pady=20)
 
 # ===========================================
 # 3. Configuring Grid Layout for Spacing
