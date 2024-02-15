@@ -26,7 +26,7 @@ canvas = Canvas(width=250, height=250, bg=YELLOW, highlightthickness=0)
 tomato_img = PhotoImage(file="tomato.png")
 canvas.create_image(125, 125, image=tomato_img)
 canvas.create_text(
-    125, 125, text="00:00", fill="seashell", font=(FONT_NAME, 35, "bold")
+    125, 145, text="00:00", fill="seashell", font=(FONT_NAME, 25, "bold")
 )
 canvas.pack()
 
