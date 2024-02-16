@@ -12,6 +12,12 @@ SHORT_BREAK_MIN = 5
 LONG_BREAK_MIN = 20
 fg = GREEN
 
+# Variable to control the grid line color
+GRID_LINE_COLOR = (
+    YELLOW  # Change to "lightgrey" for visible lines or YELLOW for "transparent"
+)
+
+
 # ---------------------------- TIMER RESET ------------------------------- #
 
 
@@ -22,31 +28,35 @@ fg = GREEN
 # ---------------------------- UI SETUP ------------------------------- #
 window = Tk()
 window.title("Pomodoro")
-window.config(padx=100, pady=50, bg=YELLOW)
+window.config(padx=50, pady=50, bg=YELLOW)
 
-# 1. Configure grid layout for equal column and row distribution
+# Configure grid layout for equal column and row distribution
 for i in range(3):  # 3 columns
-    window.grid_columnconfigure(i, weight=1)
+    window.grid_columnconfigure(i, weight=1, uniform="fred")
 for i in range(5):  # 5 rows
-    window.grid_rowconfigure(i, weight=1)
+    window.grid_rowconfigure(i, weight=1, uniform="fred")
 
-# 2. Create faint grid lines for subtle visualization
-for i in range(3):
-    for j in range(5):
-        Frame(window, bg="lightgrey", width=2).grid(row=j, column=i, sticky="ns")
-        Frame(window, bg="lightgrey", height=2).grid(row=i, column=j, sticky="ew")
+# Create cells with configurable borders to simulate grid lines or make them "transparent"
+for i in range(3):  # for each column
+    for j in range(5):  # for each row
+        cell_frame = Frame(
+            window,
+            highlightbackground=GRID_LINE_COLOR,
+            highlightcolor=GRID_LINE_COLOR,
+            highlightthickness=1,
+            bd=0,
+        )
+        cell_frame.grid(row=j, column=i, sticky="nsew", padx=0.5, pady=0.5)
 
-# 3. Label Widget for the title
-label_instruction = Label(window, text="Timer")
-label_instruction.grid(row=0, column=0, sticky="WE", pady=(10, 20))
-
-# 4. Canvas for tomato image and timer text
-canvas = Canvas(width=250, height=250, bg=YELLOW, highlightthickness=0)
-tomato_img = PhotoImage(file="tomato.png")
-canvas.create_image(125, 125, image=tomato_img)
+# Canvas for tomato image and timer text
+canvas = Canvas(window, width=100, height=100, bg=YELLOW, highlightthickness=0)
+tomato_img = PhotoImage(
+    file="tomato.png"
+)  # Ensure tomato.png is in the correct directory
+canvas.create_image(50, 50, image=tomato_img)
 timer_text = canvas.create_text(
-    125, 145, text="00:00", fill="seashell", font=(FONT_NAME, 25, "bold")
+    50, 65, text="00:00", fill="black", font=(FONT_NAME, 15, "bold")
 )
-canvas.grid(row=1, column=1)  # Center placement
+canvas.grid(row=2, column=1)  # Center placement in the grid
 
 window.mainloop()
