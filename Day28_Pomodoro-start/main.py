@@ -125,6 +125,59 @@ reset_button = Button(
 )
 reset_button.grid(row=3, column=2)
 
+# -----------------------------------------
+# 3g. Create Timer Label
+# -----------------------------------------
+
+timer_label = Label(
+    window, text="Timer", bg=GREEN, fg="white", font=(FONT_NAME, 24, "bold")
+)
+timer_label.grid(row=0, column=1, columnspan=2)
+
+# -----------------------------------------
+# 3h. Create Leg Checkmark Panel
+# -----------------------------------------
+
+leg_checkmark_panel = Frame(window, bg=GREEN)
+leg_checkmark_panel.grid(row=4, column=0, columnspan=3)
+
+leg1_checkmark = Label(
+    leg_checkmark_panel,
+    text=CHECKMARK,
+    bg=GREEN,
+    fg="white",
+    font=(FONT_NAME, 15, "bold"),
+)
+leg1_checkmark.grid(row=0, column=0)
+
+leg2_checkmark = Label(
+    leg_checkmark_panel,
+    text=CHECKMARK,
+    bg=GREEN,
+    fg="white",
+    font=(FONT_NAME, 15, "bold"),
+)
+leg2_checkmark.grid(row=0, column=1)
+
+leg3_checkmark = Label(
+    leg_checkmark_panel,
+    text=CHECKMARK,
+    bg=GREEN,
+    fg="white",
+    font=(FONT_NAME, 15, "bold"),
+)
+leg3_checkmark.grid(row=0, column=2)
+
+leg4_checkmark = Label(
+    leg_checkmark_panel,
+    text=CHECKMARK,
+    bg=GREEN,
+    fg="white",
+    font=(FONT_NAME, 15, "bold"),
+)
+leg4_checkmark.grid(row=0, column=3)
+
+
 # ===========================================
 # 4. MAIN LOOP
 # ===========================================
