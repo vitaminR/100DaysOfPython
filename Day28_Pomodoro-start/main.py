@@ -1,11 +1,8 @@
-# ===========================================
-# 1. IMPORTS
-# ===========================================
-
+import time
 from tkinter import *
 
 # ===========================================
-# 2. CONSTANTS
+# 1. CONSTANTS
 # ===========================================
 
 PINK = "#e2979c"
@@ -14,22 +11,28 @@ GREEN = "#9bdeac"
 YELLOW = "#f7f5dd"
 GREY = "#c0c0c0"
 FONT_NAME = "Courier"
-WORK_MIN = 25
+WORK_MIN = 20
 SHORT_BREAK_MIN = 5
-LONG_BREAK_MIN = 20
-fg = GREEN
-CHECKMARK = "✔"
+LONG_BREAK_MIN = 45
+CHECKMARK = "✔"  # Add this lineb'
 
 # -----------------------------------------
-# 2a. Grid Line Color Constant
+# 1a. Timer Variables
 # -----------------------------------------
 
-# Change to YELLOW or "lightgrey" to toggle grid line visibility
-GRID_LINE_COLOR = GREY
 
+timer = None
+work_sessions = 0
+
+# -----------------------------------------
+# 1b. Leg Checkmark Panel Variables
+# -----------------------------------------
+
+leg_checkmark_panel = None
+leg_checkmark_labels = []
 
 # ===========================================
-# 3. UI SETUP
+# 2. UI SETUP
 # ===========================================
 
 window = Tk()
@@ -37,96 +40,63 @@ window.title("Pomodoro")
 window.config(padx=50, pady=50, bg=YELLOW)
 
 # -----------------------------------------
-# 3a. Configure Grid Layout
+# 2a. Configure Grid Layout
 # -----------------------------------------
 
-# Configure grid layout for equal column and row distribution
+# Configure the grid layout for equal column and row distribution
 for i in range(3):  # 3 columns
     window.grid_columnconfigure(
         i, weight=1, minsize=50
     )  # Ensure columns have a minimum size
-for i in range(5):  # 5 rows
+for i in range(8):  # 8 rows
     window.grid_rowconfigure(i, weight=1, minsize=20)  # Ensure rows have a minimum size
 
 # -----------------------------------------
-# 3b. Create Grid Lines
+# 2b. Create Leg Checkmark Panel
 # -----------------------------------------
 
-# Optionally create grid lines based on the color setting
-for i in range(3):  # Column iteration
-    for j in range(5):  # Row iteration
-        if (
-            GRID_LINE_COLOR != YELLOW
-        ):  # Only add grid lines if color is not set to background color
-            cell_frame = Frame(
-                window, highlightcolor=GRID_LINE_COLOR, highlightthickness=1, bd=0
-            )
-            cell_frame.grid(row=j, column=i, sticky="nsew", padx=1, pady=1)
-        else:  # Create an empty frame to maintain grid structure without visible lines
-            Frame(window, bg=YELLOW).grid(
-                row=j, column=i, sticky="nsew", padx=1, pady=1
-            )
+leg_checkmark_panel = Frame(window, bg=GREEN)
+leg_checkmark_panel.grid(row=7, column=0, columnspan=3)
+
+# Create the leg checkmark labels with their text, background color, foreground color, and font
+for i in range(4):
+    checkmark_label = Label(
+        leg_checkmark_panel,
+        text=CHECKMARK,
+        bg=GREEN,
+        fg="white",
+        font=(FONT_NAME, 15, "bold"),
+    )
+    leg_checkmark_labels.append(checkmark_label)
+    checkmark_label.grid(row=0, column=i)
+
+# Initially hide the leg checkmark labels
+for label in leg_checkmark_labels:
+    label.grid_remove()
 
 # -----------------------------------------
-# 3c. Create Canvas
+# 2c. Create Canvas
 # -----------------------------------------
 
-# Canvas for tomato image and timer text
+# Create a canvas for displaying the tomato image and timer text
 canvas = Canvas(window, width=200, height=224, bg=YELLOW, highlightthickness=0)
-tomato_img = PhotoImage(file="tomato.png")  # Ensure the file exists
+
+# Load the tomato image file
+tomato_img = PhotoImage(file="tomato.png")  # Ensure the image file exists
+
+# Create an image object on the canvas at the center
 canvas.create_image(100, 112, image=tomato_img)
+
+# Create a text object on the canvas for displaying the timer
 timer_text = canvas.create_text(
     100, 130, text="00:00", fill="black", font=(FONT_NAME, 15, "bold")
 )
+
+# Place the canvas in the grid at row 2, column 1
 canvas.grid(row=2, column=1)  # Center placement in the grid
 
 # -----------------------------------------
-# 3d. Button Click Handlers
-# -----------------------------------------
-
-
-def on_start_click():
-    print("Start button clicked!")
-
-
-def on_reset_click():
-    print("Reset button clicked!")
-
-
-# -----------------------------------------
-# 3e. Create Start Button
-# -----------------------------------------
-
-# Create the start button
-start_button = Button(
-    window,
-    text="Start",
-    command=on_start_click,
-    bg=GREY,
-    activebackground=GREY,
-    bd=2,
-    relief="groove",
-)
-start_button.grid(row=3, column=0)
-
-# -----------------------------------------
-# 3f. Create Reset Button
-# -----------------------------------------
-
-# Create the reset button
-reset_button = Button(
-    window,
-    text="Reset",
-    command=on_reset_click,
-    bg=GREY,
-    activebackground=GREY,
-    bd=2,
-    relief="groove",
-)
-reset_button.grid(row=3, column=2)
-
-# -----------------------------------------
-# 3g. Create Timer Label
+# 2d. Create Timer Label
 # -----------------------------------------
 
 timer_label = Label(
@@ -134,52 +104,144 @@ timer_label = Label(
 )
 timer_label.grid(row=0, column=1, columnspan=2)
 
+
+# ===========================================
+# 3. FUNCTIONS
+# ===========================================
+
 # -----------------------------------------
-# 3h. Create Leg Checkmark Panel
+# 3a. Reset Timer
 # -----------------------------------------
 
-leg_checkmark_panel = Frame(window, bg=GREEN)
-leg_checkmark_panel.grid(row=4, column=0, columnspan=3)
 
-leg1_checkmark = Label(
-    leg_checkmark_panel,
-    text=CHECKMARK,
-    bg=GREEN,
-    fg="white",
-    font=(FONT_NAME, 15, "bold"),
-)
-leg1_checkmark.grid(row=0, column=0)
+def reset_timer():
+    global work_sessions
 
-leg2_checkmark = Label(
-    leg_checkmark_panel,
-    text=CHECKMARK,
-    bg=GREEN,
-    fg="white",
-    font=(FONT_NAME, 15, "bold"),
-)
-leg2_checkmark.grid(row=0, column=1)
+    # Stop the timer if it's running
+    if timer:
+        timer.cancel()
 
-leg3_checkmark = Label(
-    leg_checkmark_panel,
-    text=CHECKMARK,
-    bg=GREEN,
-    fg="white",
-    font=(FONT_NAME, 15, "bold"),
-)
-leg3_checkmark.grid(row=0, column=2)
+    # Reset the timer text to 00:00
+    canvas.itemconfig(timer_text, text="00:00")
 
-leg4_checkmark = Label(
-    leg_checkmark_panel,
-    text=CHECKMARK,
-    bg=GREEN,
-    fg="white",
-    font=(FONT_NAME, 15, "bold"),
-)
-leg4_checkmark.grid(row=0, column=3)
+    # Reset the work sessions counter
+    work_sessions = 0
+
+    # Hide the leg checkmark labels
+    for label in leg_checkmark_labels:
+        label.grid_remove()
+
+
+# -----------------------------------------
+# 3b. Start Timer
+# -----------------------------------------
+
+
+def start_timer():
+    global timer  # Add this line
+    global work_sessions
+
+    # Reset the timer if it's already running
+    if timer:
+        reset_timer()
+
+    # Increment the work sessions counter
+    work_sessions += 1
+
+    # Calculate the total number of minutes for the current session
+    if work_sessions % 8 == 0:  # Long break
+        minutes = LONG_BREAK_MIN
+    elif work_sessions % 2 == 0:  # Short break
+        minutes = SHORT_BREAK_MIN
+    else:  # Work session
+        minutes = WORK_MIN
+
+    # Convert minutes to seconds
+    seconds = minutes * 60
+
+    # Create a countdown timer
+    timer = window.after(seconds * 1000, countdown)
+
+
+# -----------------------------------------
+# 3c. Countdown
+# -----------------------------------------
+
+
+def countdown():
+    global work_sessions
+
+    # Get the current time in seconds
+    current_seconds = time.time()
+
+    # Calculate the remaining seconds
+    remaining_seconds = timer - current_seconds
+
+    # Convert the remaining seconds to minutes and seconds
+    remaining_minutes = remaining_seconds // 60
+    remaining_seconds = remaining_seconds % 60
+
+    # Update the timer text
+    canvas.itemconfig(
+        timer_text, text=f"{remaining_minutes:02d}:{remaining_seconds:02d}"
+    )
+
+    # Check if the timer has reached 00:00
+    if remaining_seconds == 0 and remaining_minutes == 0:
+        # Stop the timer
+        timer.cancel()
+
+        # Show the leg checkmark label for the completed work session
+        leg_checkmark_labels[work_sessions - 1].grid()
+
+        # If all 4 work sessions are complete, reset the timer
+        if work_sessions == 4:
+            reset_timer()
+        else:
+            # Start the next timer
+            start_timer()
+    else:
+        # Create a new countdown timer
+        timer = window.after(1000, countdown)
 
 
 # ===========================================
-# 4. MAIN LOOP
+# 4. BUTTONS
+# ===========================================
+
+# -----------------------------------------
+# 4a. Start Button
+# -----------------------------------------
+
+start_button = Button(
+    window,
+    text="Start",
+    command=start_timer,
+    bg=GREY,
+    activebackground=GREY,
+    bd=2,
+    relief="groove",
+)
+start_button.grid(row=6, column=0)
+
+# -----------------------------------------
+# 4b. Reset Button
+# -----------------------------------------
+
+reset_button = Button(
+    window,
+    text="Reset",
+    command=reset_timer,
+    bg=GREY,
+    activebackground=GREY,
+    bd=2,
+    relief="groove",
+)
+reset_button.grid(row=6, column=2)
+
+
+# ===========================================
+# 5. MAIN LOOP
 # ===========================================
 
 window.mainloop()
