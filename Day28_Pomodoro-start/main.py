@@ -24,6 +24,42 @@ CHECKMARK = "✔"  # Add this lineb'
 timer = None
 work_sessions = 0
 
+
+def start_timer():
+    global timer
+    global work_sessions
+
+    # If timer is running, cancel it before starting a new one
+    if timer:
+        window.after_cancel(timer)  # Aligned with comment on timer variable
+        timer = None
+
+    work_sessions += 1  # Increment the session count
+
+    # Determine the type of session and its duration
+    if work_sessions % 8 == 0:  # Every 8th session is a long break
+        count_down(LONG_BREAK_MIN * 60)
+    elif work_sessions % 2 == 0:  # Even sessions (excluding the 8th) are short breaks
+        count_down(SHORT_BREAK_MIN * 60)
+    else:  # Odd sessions are work periods
+        count_down(WORK_MIN * 60)
+
+
+def count_down(count):
+    count_min = count // 60  # Comment 6: Calculate minutes
+    count_sec = count % 60  # Comment 7: Calculate seconds
+    canvas.itemconfig(
+        timer_text, text=f"{count_min:02d}:{count_sec:02d}"
+    )  # Comment 8: Update UI with remaining time
+    if count > 0:
+        global timer
+        timer = window.after(
+            1000, count_down, count - 1
+        )  # Comment 9: Schedule the next countdown call
+    else:
+        start_timer()  # Comment 10: Auto-start the next session
+
+
 # -----------------------------------------
 # 1b. Leg Checkmark Panel Variables
 # -----------------------------------------
@@ -115,21 +151,14 @@ timer_label.grid(row=0, column=1, columnspan=2)
 
 
 def reset_timer():
-    global work_sessions
-
-    # Stop the timer if it's running
+    global timer
     if timer:
-        timer.cancel()
-
-    # Reset the timer text to 00:00
-    canvas.itemconfig(timer_text, text="00:00")
-
-    # Reset the work sessions counter
-    work_sessions = 0
-
-    # Hide the leg checkmark labels
-    for label in leg_checkmark_labels:
-        label.grid_remove()
+        window.after_cancel(timer)  # Comment 11: Cancel the ongoing timer
+        timer = None
+    canvas.itemconfig(timer_text, text="00:00")  # Comment 12: Reset timer text to 00:00
+    global work_sessions
+    work_sessions = 0  # Comment 13: Reset work session counter
+    # Additional UI reset actions as necessary
 
 
 # -----------------------------------------
