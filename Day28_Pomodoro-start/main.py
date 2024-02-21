@@ -1,6 +1,6 @@
 import time
 from tkinter import *
-import winsound
+import os
 
 
 # ===========================================
@@ -13,9 +13,9 @@ GREEN = "#9bdeac"
 YELLOW = "#f7f5dd"
 GREY = "#c0c0c0"
 FONT_NAME = "Courier"
-WORK_MIN = 2
+WORK_MIN = 1
 SHORT_BREAK_MIN = 1
-LONG_BREAK_MIN = 4
+LONG_BREAK_MIN = 1
 CHECKMARK = "✔"
 
 # -----------------------------------------
@@ -44,9 +44,8 @@ canvas.grid(column=1, row=1)
 timer_label = Label(text="Timer", font=(FONT_NAME, 50), bg=YELLOW, fg=GREEN)
 timer_label.grid(column=1, row=0)
 
-checkmarks_label = Label(fg=GREEN, bg=YELLOW)
+checkmarks_label = Label(fg=GREEN, bg=YELLOW, font=(FONT_NAME, 24))
 checkmarks_label.grid(column=1, row=3)
-
 # ===========================================
 # 3. FUNCTIONS
 # ===========================================
@@ -65,6 +64,8 @@ def count_down(count):
         global timer
         timer = window.after(1000, count_down, count - 1)
     else:
+        # Play sound when timer reaches zero
+        os.system("aplay beep.wav")
         start_timer()
 
 
@@ -109,21 +110,6 @@ def reset_timer():
     work_sessions = 0
     timer_label.config(text="Timer", fg=GREEN)
     checkmarks_label.config(text="")
-
-
-# 3d.
-def count_down(count):
-    count_min = count // 60
-    count_sec = count % 60
-    canvas.itemconfig(timer_text, text=f"{count_min:02d}:{count_sec:02d}")
-
-    if count > 0:
-        global timer
-        timer = window.after(1000, count_down, count - 1)
-    else:
-        # Play sound when timer reaches zero
-        winsound.Beep(frequency=2500, duration=1000)  # frequency, duration
-        start_timer()
 
 
 # ===========================================
