@@ -94,10 +94,6 @@ def start_timer():
         timer_label.config(text="Work", fg=GREEN)
         checkmarks_label.config(text=CHECKMARK * (work_sessions // 2))
 
-    # Bring the window to the front
-    window.attributes("-topmost", 1)
-    window.after_idle(window.attributes, "-topmost", 0)
-
 
 # -----------------------------------------
 # 3c. Reset Timer
