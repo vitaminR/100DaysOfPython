@@ -29,9 +29,49 @@ work_sessions = 0
 # 2. UI SETUP
 # ===========================================
 
+
+# ===========================================
+# 2. UI SETUP
+# ===========================================
+# ===========================================
+# 2. UI SETUP
+# ===========================================
+
+# ===========================================
+# 2. UI SETUP
+# ===========================================
+
 window = Tk()
 window.title("Pomodoro")
 window.config(padx=100, pady=50, bg=YELLOW)
+
+# Labels
+work_min_label = Label(window, text="Work Duration (min)", bg=YELLOW)
+work_min_label.grid(column=0, row=4, pady=(10, 0))
+
+short_break_min_label = Label(window, text="Short Break Duration (min)", bg=YELLOW)
+short_break_min_label.grid(column=1, row=4, pady=(10, 0))
+
+long_break_min_label = Label(window, text="Long Break Duration (min)", bg=YELLOW)
+long_break_min_label.grid(column=2, row=4, pady=(10, 0))
+
+# Entry fields
+work_min_entry = Entry(window, width=5)
+work_min_entry.insert(END, "25")  # Default value
+work_min_entry.grid(column=0, row=5)
+
+short_break_min_entry = Entry(window, width=5)
+short_break_min_entry.insert(END, "5")  # Default value
+short_break_min_entry.grid(column=1, row=5)
+
+long_break_min_entry = Entry(window, width=5)
+long_break_min_entry.insert(END, "15")  # Default value
+long_break_min_entry.grid(column=2, row=5)
+
+# Rest of your code...
+
+# Rest of your code...
+
 
 canvas = Canvas(width=200, height=224, bg=YELLOW, highlightthickness=0)
 tomato_img = PhotoImage(file="tomato.png")
@@ -83,6 +123,11 @@ def start_timer():
         timer = None
 
     work_sessions += 1
+
+    # Get work and break durations from Entry fields
+    WORK_MIN = int(work_min_entry.get())
+    SHORT_BREAK_MIN = int(short_break_min_entry.get())
+    LONG_BREAK_MIN = int(long_break_min_entry.get())
 
     if work_sessions % 8 == 0:
         count_down(LONG_BREAK_MIN * 60)
