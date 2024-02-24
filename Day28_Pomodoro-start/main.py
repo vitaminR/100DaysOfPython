@@ -18,6 +18,7 @@ SHORT_BREAK_MIN = 1
 LONG_BREAK_MIN = 1
 CHECKMARK = "✔"
 
+
 # -----------------------------------------
 # 1a. Timer Variables
 # -----------------------------------------
@@ -30,47 +31,38 @@ work_sessions = 0
 # ===========================================
 
 
-# ===========================================
-# 2. UI SETUP
-# ===========================================
-# ===========================================
-# 2. UI SETUP
-# ===========================================
-
-# ===========================================
-# 2. UI SETUP
-# ===========================================
-
 window = Tk()
 window.title("Pomodoro")
 window.config(padx=100, pady=50, bg=YELLOW)
 
-# Labels
+# Define your labels and entries here
 work_min_label = Label(window, text="Work Duration (min)", bg=YELLOW)
 work_min_label.grid(column=0, row=4, pady=(10, 0))
 
-short_break_min_label = Label(window, text="Short Break Duration (min)", bg=YELLOW)
-short_break_min_label.grid(column=1, row=4, pady=(10, 0))
-
-long_break_min_label = Label(window, text="Long Break Duration (min)", bg=YELLOW)
-long_break_min_label.grid(column=2, row=4, pady=(10, 0))
-
-# Entry fields
 work_min_entry = Entry(window, width=5)
 work_min_entry.insert(END, "25")  # Default value
 work_min_entry.grid(column=0, row=5)
 
-short_break_min_entry = Entry(window, width=5)
-short_break_min_entry.insert(END, "5")  # Default value
-short_break_min_entry.grid(column=1, row=5)
 
-long_break_min_entry = Entry(window, width=5)
-long_break_min_entry.insert(END, "15")  # Default value
-long_break_min_entry.grid(column=2, row=5)
+themes = {
+    "Dark": {"bg": "black", "fg": "green"},
+    "Colorful": {"bg": "white", "fg": "magenta"},
+}
 
-# Rest of your code...
+current_theme = StringVar(window)
+current_theme.set("Dark")  # default value
 
-# Rest of your code...
+theme_option_menu = OptionMenu(window, current_theme, *themes.keys())
+theme_option_menu.grid(column=0, row=0)
+
+
+def apply_theme(*args):
+    theme = themes[current_theme.get()]
+    window.config(bg=theme["bg"])
+    work_min_label.config(bg=theme["bg"], fg=theme["fg"])
+
+
+current_theme.trace("w", apply_theme)
 
 
 canvas = Canvas(width=200, height=224, bg=YELLOW, highlightthickness=0)
@@ -86,6 +78,25 @@ timer_label.grid(column=1, row=0)
 
 checkmarks_label = Label(fg=GREEN, bg=YELLOW, font=(FONT_NAME, 24))
 checkmarks_label.grid(column=1, row=3)
+
+
+# Short Break Duration
+short_break_min_label = Label(window, text="Short Break Duration (min)", bg=YELLOW)
+short_break_min_label.grid(column=1, row=4, pady=(10, 0))
+
+short_break_min_entry = Entry(window, width=5)
+short_break_min_entry.insert(END, "5")  # Default value
+short_break_min_entry.grid(column=1, row=5)
+
+# Long Break Duration
+long_break_min_label = Label(window, text="Long Break Duration (min)", bg=YELLOW)
+long_break_min_label.grid(column=2, row=4, pady=(10, 0))
+
+long_break_min_entry = Entry(window, width=5)
+long_break_min_entry.insert(END, "15")  # Default value
+long_break_min_entry.grid(column=2, row=5)
+
+
 # ===========================================
 # 3. FUNCTIONS
 # ===========================================
