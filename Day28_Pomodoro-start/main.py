@@ -1,6 +1,7 @@
 import time
 from tkinter import *
 import os
+import openai
 
 
 # ===========================================
@@ -56,10 +57,32 @@ theme_option_menu = OptionMenu(window, current_theme, *themes.keys())
 theme_option_menu.grid(column=0, row=0)
 
 
+remaining_time = (
+    0  # Add this line at the top of your script to declare the global variable
+)
+
+
 def apply_theme(*args):
+    global canvas, timer_text, remaining_time
     theme = themes[current_theme.get()]
     window.config(bg=theme["bg"])
+    canvas.grid_forget()  # Remove the old canvas from the grid
+    canvas = Canvas(width=200, height=224, bg=theme["bg"], highlightthickness=0)
+    canvas.create_image(100, 112, image=tomato_img)
+    timer_text = canvas.create_text(
+        100, 130, text="00:00", fill="white", font=(FONT_NAME, 35, "bold")
+    )
+    canvas.grid(column=1, row=1)
     work_min_label.config(bg=theme["bg"], fg=theme["fg"])
+    short_break_min_label.config(bg=theme["bg"], fg=theme["fg"])
+    long_break_min_label.config(bg=theme["bg"], fg=theme["fg"])
+    timer_label.config(bg=theme["bg"], fg=theme["fg"])
+    checkmarks_label.config(bg=theme["bg"], fg=theme["fg"])
+    # Apply the theme to other widgets...
+    if (
+        remaining_time > 0
+    ):  # If there was a timer running, restart it with the remaining time
+        count_down(remaining_time)
 
 
 current_theme.trace("w", apply_theme)
@@ -107,6 +130,8 @@ long_break_min_entry.grid(column=2, row=5)
 
 
 def count_down(count):
+    global remaining_time
+    remaining_time = count  # Store the remaining time
     count_min = count // 60
     count_sec = count % 60
     canvas.itemconfig(timer_text, text=f"{count_min:02d}:{count_sec:02d}")
@@ -168,6 +193,34 @@ def reset_timer():
     checkmarks_label.config(text="")
 
 
+# -----------------------------------------
+# 3d. AI
+# -----------------------------------------
+
+
+openai.api_key = "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"
+
+response = openai.Completion.create(
+    engine="text-davinci-002",
+    prompt="Translate the following English text to French: '{}'",
+    max_tokens=60,
+)
+
+print(response.choices[0].text.strip())
+
+
+def handle_chatbot_command(command):
+    if "mode=dark" in command:
+        current_theme.set("dark")
+        apply_theme()
+    elif "mode=light" in command:
+        current_theme.set("light")
+        apply_theme()
+    elif "minute=" in command:
+        minutes = int(command.split("=")[1])
+        start_timer()
+
+
 # ===========================================
 # 4. EVENT HANDLERS
 # ===========================================
@@ -199,6 +252,42 @@ start_button.grid(column=0, row=2)
 
 reset_button = Button(text="Reset", command=reset_button_click, highlightthickness=0)
 reset_button.grid(column=2, row=2)
+
+
+command_entry = Entry(window, width=50)
+command_entry.grid(column=0, row=6, columnspan=3)
+
+
+def submit_command():
+    command = command_entry.get()
+    handle_chatbot_command(command)
+
+
+submit_button = Button(
+    text="Submit Command", command=submit_command, highlightthickness=0
+)
+submit_button.grid(column=0, row=7, columnspan=3)
+
+
+# Update your handle_chatbot_command function
+def handle_chatbot_command(command):
+    response = openai.Completion.create(
+        engine="text-davinci-002",
+        prompt=command,
+        max_tokens=60,
+    )
+    response_text = response.choices[0].text.strip()
+
+    if "mode=dark" in response_text:
+        current_theme.set("Dark")
+        apply_theme()
+    elif "mode=light" in response_text:
+        current_theme.set("Colorful")
+        apply_theme()
+    elif "minute=" in response_text:
+        minutes = int(response_text.split("=")[1])
+        start_timer(minutes)
+
 
 # ===========================================
 # 6. MAIN LOOP
