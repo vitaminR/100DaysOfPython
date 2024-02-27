@@ -1,114 +1,89 @@
-import streamlit as st
-from datetime import datetime, timedelta
-import time
-from PIL import Image
+# import all my modules
+import random
+from tkinter import messagebox
 
-# Constants
-WORK_MIN = 1  # Duration for work in minutes for demonstration
-SHORT_BREAK_MIN = 1  # Duration for short break in minutes
-LONG_BREAK_MIN = 1  # Duration for long break in minutes
-WORK_SESSIONS_BEFORE_LONG_BREAK = 4  # Number of work sessions before a long break
-
-# Initialize session state variables if they don't already exist
-if "current_time" not in st.session_state:
-    st.session_state.current_time = datetime.now()
-if "timer_end" not in st.session_state:
-    st.session_state.timer_end = datetime.now()
-if "work_sessions_completed" not in st.session_state:
-    st.session_state.work_sessions_completed = 0
-if "timer_active" not in st.session_state:
-    st.session_state.timer_active = False
+# import my data.txt
+import os
+import tkinter as tk
 
 
-# Functions
-def start_timer(duration_minutes):
-    st.session_state.current_time = datetime.now()
-    st.session_state.timer_end = st.session_state.current_time + timedelta(
-        minutes=duration_minutes
-    )
-    st.session_state.timer_active = True
-    if duration_minutes == WORK_MIN:
-        st.session_state.work_sessions_completed += 1
+# ---------------------------- PASSWORD GENERATOR ------------------------------- #
+# generate a password that is 8 characters long
+def generate_password():
+    entry_password.delete(0, tk.END)
+    password = ""
+    for _ in range(8):
+        password += chr(random.randint(33, 126))
+    entry_password.insert(0, password)
 
 
-def reset_timer():
-    st.session_state.timer_active = False
-    st.session_state.work_sessions_completed = 0
-    st.session_state.timer_end = datetime.now()  # Reset the timer_end variable
+# ---------------------------- SAVE PASSWORD ------------------------------- #
 
 
-def display_time_remaining():
-    now = datetime.now()
-    if st.session_state.timer_active and now < st.session_state.timer_end:
-        delta = st.session_state.timer_end - now
-        minutes, seconds = divmod(delta.seconds, 60)
-        st.header(f"{minutes:02d}:{seconds:02d}")
-        time.sleep(1)
-        st.rerun()  # Replace st.experimental_rerun() with st.rerun()
-    elif st.session_state.timer_active:
-        st.session_state.timer_active = False
-        st.balloons()  # Visual feedback
-        st.audio("beep.wav")  # Replace with your own audio file path or URL
-        st.rerun()  # Replace st.experimental_rerun() with st.rerun()
+# save the password to a file
+def save():
+    website = entry_website.get()
+    email = entry_email.get()
+    password = entry_password.get()
+
+    if not website or not email or not password:
+        tk.messagebox.showerror(
+            title="Error", message="All fields must be filled out before saving."
+        )
+        return
+
+    with open("data.txt", "a", encoding="utf-8") as data:
+        data.write(f"{website} | {email} | {password}\n")
+        entry_website.delete(0, tk.END)
+        entry_password.delete(0, tk.END)
 
 
-def display_checkmarks():
-    checkmarks = "✔️" * (
-        st.session_state.work_sessions_completed // WORK_SESSIONS_BEFORE_LONG_BREAK
-    )
-    st.sidebar.markdown(f"### Completed Cycles: {checkmarks}")
+# ---------------------------- UI SETUP ------------------------------- #
+
+# create a window
+window = tk.Tk()
+window.title("Password Manager")
+window.config(padx=50, pady=50)
+
+# create a canvas
+canvas = tk.Canvas(width=200, height=200)
+canvas.grid(row=0, column=1)
 
 
-# Sidebar
-st.sidebar.title("Pomodoro Timer Settings")
-work_duration = st.sidebar.number_input(
-    "Work Duration (min)", min_value=1, value=WORK_MIN, step=1
-)
-short_break_duration = st.sidebar.number_input(
-    "Short Break Duration (min)", min_value=1, value=SHORT_BREAK_MIN, step=1
-)
-long_break_duration = st.sidebar.number_input(
-    "Long Break Duration (min)", min_value=1, value=LONG_BREAK_MIN, step=1
-)
+# import logo
+logo = tk.PhotoImage(file="logo.png")
+canvas.create_image(100, 100, image=logo)
 
-# Main Page
-st.title("Pomodoro Timer")
-pom_img = Image.open("tomato.png")
-timer_container = st.container()
-with timer_container:
-    st.image(pom_img)
-    display_time_remaining()
-display_checkmarks()
+# Row 1
+label_website = tk.Label(text="Website:")
+label_website.grid(row=1, column=0)
+entry_website = tk.Entry(width=35)
+entry_website.grid(row=1, column=1, columnspan=2, sticky="EW")
 
-# Timer Controls
-if not st.session_state.timer_active:
-    if st.button("Start Work Timer"):
-        start_timer(work_duration)
-    if (
-        st.session_state.work_sessions_completed > 0
-        and st.session_state.work_sessions_completed % WORK_SESSIONS_BEFORE_LONG_BREAK
-        == 0
-    ):
-        if st.button("Start Long Break Timer"):
-            start_timer(long_break_duration)
-    else:
-        if st.button("Start Short Break Timer"):
-            start_timer(short_break_duration)
-if st.button("Reset Timer"):
-    reset_timer()
+# row 2
+label_email = tk.Label(text="Email/Username:")
+label_email.grid(row=2, column=0)
+entry_email = tk.Entry(width=35)
+entry_email.grid(row=2, column=1, columnspan=2, sticky="EW")
+entry_email.insert(0, "nymilitarypolice@gmail.com")
 
-# Keep the timer running in the background
-while st.session_state.timer_active:
-    display_time_remaining()  # Only call the function once per iteration
-    st.rerun()  # Replace st.experimental_rerun() with st.rerun()
+# row 3
+label_password = tk.Label(text="Password:")
+label_password.grid(row=3, column=0)
+entry_password = tk.Entry(width=21)
+entry_password.grid(row=3, column=1, sticky="EW")
 
-# Explanation and User Guide
-st.markdown(
-    """
-This Pomodoro Timer helps you manage your work and break periods effectively. 
-- Click **Start Work Timer** to begin a work session.
-- After completing a session, choose to start a short break or a long break after four work sessions.
-- **Reset Timer** clears the current progress and starts over.
-- **Completed Cycles** show how many sets of 4 work sessions you've completed.
-"""
-)
+button_generate = tk.Button(text="Generate Password")
+button_generate.grid(row=3, column=2)
+
+button_add = tk.Button(text="Add", width=36)
+button_add.grid(row=4, column=1, columnspan=2)
+
+# make the buttons work
+button_generate.config(command=generate_password)
+button_add.config(command=save)
+
+
+# start the program
+
+window.mainloop()
