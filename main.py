@@ -5,7 +5,6 @@ from tkinter import END, messagebox, simpledialog
 from PIL import Image, ImageTk, ImageDraw
 
 
-# ---------------------------- 1. Copy to clipboard popup ------------------------------- ## ---------------------------- 1. Copy to clipboard popup ------------------------------- #
 # ---------------------------- 1. Copy to clipboard popup ------------------------------- #
 class CopyableDialog(simpledialog.Dialog):
     def __init__(self, parent, title=None, password=None):
@@ -15,11 +14,29 @@ class CopyableDialog(simpledialog.Dialog):
     def body(self, parent):
         label = tk.Label(self, text="Password:")
         label.pack()
-        self.text = tk.Text(self, width=40, height=1)
-        self.text.pack(fill="both", expand=True)
+        self.text = tk.Text(
+            self,
+            width=20,
+            height=1,
+            bg="black",
+            fg="green",
+            bd=1,
+            relief="sunken",
+            font=("Helvetica", 12, "bold"),
+        )
+        self.text.pack(padx=10, pady=10)
         self.text.insert("1.0", self.password)
         self.text.configure(state="disabled")
+        copy_button = tk.Button(
+            self, text="Copy to Clipboard", command=self.copy_to_clipboard
+        )
+        copy_button.pack()
         return self.text
+
+    def copy_to_clipboard(self):
+        self.clipboard_clear()
+        self.clipboard_append(self.password)
+        messagebox.showinfo("Success", "Password copied to clipboard!")
 
     def set_geometry(self, x, y):
         self.geometry(f"+{x}+{y}")
