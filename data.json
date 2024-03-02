@@ -1,14 +1,10 @@
 {
-    "test": {
+    "1234": {
         "email": "nymilitarypolice@gmail.com",
-        "password": "?Gd:J}s!"
+        "password": "1234"
     },
-    "google.com": {
+    "1234.#$@": {
         "email": "nymilitarypolice@gmail.com",
-        "password": "&8t3uuvX"
-    },
-    "google": {
-        "email": "nymilitarypolice@gmail.com",
-        "password": "aF\\[S=<v"
+        "password": "H_[,i'Z2"
     }
 }

@@ -29,18 +29,23 @@ def save():
             title="Error", message="All fields must be filled out before saving."
         )
     else:
-        with open("data.json", "r") as data_file:
-            # Saving
-            data = json.load(data_file)
-            # updating
+        try:
+            with open("data.json", "r") as data_file:
+                # reading old data
+                data = json.load(data_file)
+        except FileNotFoundError:
+            with open("data.json", "w") as data_file:
+                json.dump(new_data, data_file, indent=4)
+        else:
+            # updating old data with new data
             data.update(new_data)
 
-        with open("data.json", "w") as data_file:
-            # saving
-            json.dump(data, data_file, indent=4)
-
-        entry_website.delete(0, END)
-        entry_password.delete(0, END)
+            with open("data.json", "w") as data_file:
+                # saving
+                json.dump(data, data_file, indent=4)
+        finally:
+            entry_website.delete(0, END)
+            entry_password.delete(0, END)
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -48,6 +53,7 @@ window = tk.Tk()
 window.title("Password Manager")
 window.grid_rowconfigure(6, minsize=50)
 window.config(padx=50, pady=50)
+tk.Label(window).grid(row=6)
 
 canvas = tk.Canvas(width=200, height=200)
 canvas.grid(row=0, column=1, pady=20)
@@ -94,5 +100,7 @@ tk.Button(text="Add", width=36, command=save).grid(
     row=5, column=1, columnspan=2, rowspan=2
 )
 
+# Add an empty label in the 6th row to force the window to accommodate the extra row
+tk.Label(window).grid(row=6)
 
 window.mainloop()
