@@ -2,6 +2,11 @@ from tkinter import *
 import openai
 from dotenv import load_dotenv
 import os
+import asyncio
+import aiohttp
+from tkinter import ttk
+import threading
+
 
 # -----------------------------------------
 # 1. Environment Setup and API Configuration
@@ -59,23 +64,47 @@ run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
 #     - Collects the generated math question and answer from the OpenAI thread
 messages = client.beta.threads.messages.list(thread_id=thread.id)
 
+# Debugging: Print the OpenAI response
+print("OpenAI Response:", messages)
+
+
+# 2.7 Asynchronous Flashcard Generation
+async def generate_flashcard_content():
+    """Asynchronously interacts with the OpenAI Assistant to get a new flashcard."""
+
+    async with aiohttp.ClientSession() as session:
+        # ... (Requests for questions and selecting from ML_Math document) ...
+
+        # Retrieve messages
+        async with session.post(
+            "https://api.openai.com/v1/chat/completions",
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {openai.api_key}",
+            },
+            json={
+                "model": "gpt-4-turbo-preview",
+                "messages": math_problem.messages,  # Use messages from MathProblem
+            },
+        ) as response:
+            data = await response.json()
+            return extract_problem_and_answer(data["choices"][0]["message"])
+
 
 # -----------------------------------------
 # 3. Math Problem Class
 # -----------------------------------------
 
 
-def extract_problem_and_answer(messages):
-    """Assumes a simple 'q:' and 'a:' format in the OpenAI response."""
-    for message in messages.data:
-        if message.role == "assistant":
-            text = message.content[0].text.value
-
-            # Simple splitting (adjust if the response format changes)
-            question, answer = text.split("q:")[1].split("a:")
-            return question.strip(), answer.strip()
-
-    # If no 'q:' and 'a:' are found:
+def extract_problem_and_answer(message_data):
+    message = message_data["data"][0]  # Access the first message within the 'data' key
+    if message["role"] == "assistant":
+        text = message["content"][0]["text"]["value"]
+        parts = text.split("q:")
+        if len(parts) >= 2:
+            question = parts[1].split("a:")[0].strip()
+            answer = parts[1].split("a:")[1].strip()
+            return question, answer
     return "Question not found", "Answer not found"
 
 
@@ -89,8 +118,6 @@ class MathProblem:
 
     def get_new_problem(self):
         """Fetches a new math problem and answer from the OpenAI thread."""
-        # TODO: Extract the question and answer from the OpenAI response in 'messages'
-        #       You'll likely need to parse the text content of the assistant's messages
         self.problem, self.answer = extract_problem_and_answer(messages)
 
     def get_problem(self):
@@ -126,36 +153,47 @@ canvas.grid(row=0, column=0, columnspan=2)
 
 # 4.3 Initialize the Math Problem
 math_problem = MathProblem()  # Initialize MathProblem to get the first question
-
+# 4.4 Loading Bar
+progress_bar = ttk.Progressbar(
+    window, orient=HORIZONTAL, length=300, mode="indeterminate"
+)
+progress_bar.grid(row=2, column=0, columnspan=2, pady=10)
 # -----------------------------------------
 # 5.  Updating the Flashcard
 # -----------------------------------------
 
 
 # 5.1 Function to update the displayed flashcard
-def update_card():
-    """Retrieves a new problem from the MathProblem object and updates the Tkinter canvas."""
-    new_problem = math_problem.get_problem()
-    canvas.itemconfig(canvas_text, text=new_problem)
 
 
-# ... (Rest of your Tkinter GUI code) ...
+async def update_card():
+    """Asynchronously fetches a new flashcard and updates the display."""
+    progress_bar.start()  # Start loading bar
+    try:
+        new_problem, new_answer = await generate_flashcard_content()
+        math_problem.problem = new_problem
+        math_problem.answer = new_answer
+        canvas.itemconfig(canvas_text, text=new_problem)
+    finally:
+        progress_bar.stop()  # Stop loading bar
 
 
 # -----------------------------------------
 # 6. Button Handlers
 # -----------------------------------------
-def unknown_button_click():
-    """Handles the 'Unknown' button press."""
-    print("Incorrect")  # Could be expanded to provide feedback or explanations
-    math_problem.get_new_problem()
+async def unknown_button_click():
+    """Handles the 'Unknown' button press.
+    Should move the current card out of circulation (TBD)."""
+    print("Incorrect")
+    await generate_flashcard_content()  # Get new content directly
     update_card()
 
 
-def known_button_click():
-    """Handles the 'Known' button press."""
-    print("Correct")  # Could be expanded to include rewards or progress tracking
-    math_problem.get_new_problem()
+async def known_button_click():
+    """Handles the 'Known' button press.
+    Should move to the next card (TBD)."""
+    print("Correct")
+    await generate_flashcard_content()  # Get new content directly
     update_card()
 
 
@@ -169,12 +207,19 @@ unknown_button = Button(
     image=unknown_img, highlightthickness=0, command=unknown_button_click
 )
 unknown_button.grid(row=1, column=0)
+
+
 # -----------------------------------------
 # 7. Starting the Flashcard App
 # -----------------------------------------
+async def start_app():
+    await update_card()  # Initial card display
+    window.mainloop()
 
-# 7.1 Initial card display
-update_card()
+
+if __name__ == "__main__":
+    asyncio.run(start_app())
+
 
 # 7.2 Tkinter Main Loop - Keeps the GUI running
 window.mainloop()
