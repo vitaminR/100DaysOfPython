@@ -5,9 +5,9 @@ import os
 
 # 0. Load environment variables and configure the OpenAI API key
 load_dotenv()
-openai.api_key = os.getenv(
-    "OPENAI_API_KEY"
-)  # Fetch the OpenAI API key from environment variables
+openai_api_key = os.getenv("OPENAI_API_KEY")
+if not openai_api_key:
+    raise Exception("OPENAI_API_KEY is not set in the environment variables.")
 
 
 # 1. Define a custom exception for handling errors related to the OpenAI API
@@ -19,23 +19,14 @@ class OpenAIError(Exception):
 class OpenAIChat:
     # 2.1 Initialization
     def __init__(self, assistant_id):
-        """
-        Initialize the OpenAIChat instance.
-        - assistant_id (str): Unique identifier for the OpenAI assistant.
-        """
-        self.assistant_id = assistant_id  # Store the assistant ID
-        self.session = None  # Session will be initialized later
+        self.assistant_id = assistant_id
+        self.session = None  # Session will be initialized in create method
 
     # 2.2 Asynchronous class method for creating an instance with a session
     @classmethod
     async def create(cls, assistant_id):
-        """
-        Asynchronously initializes the aiohttp session and returns an instance of OpenAIChat.
-        """
         instance = cls(assistant_id)
-        instance.session = (
-            await aiohttp.ClientSession()
-        )  # Asynchronously create the session
+        instance.session = aiohttp.ClientSession()  # Correctly create the session
         return instance
 
     # 2.3 Create an assistant

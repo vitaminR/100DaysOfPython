@@ -101,3 +101,12 @@ async def test_close_session(chat, mocker):
     mocker.patch("aiohttp.ClientSession.close", new_callable=MagicMock)
     await chat.close()
     aiohttp.ClientSession.close.assert_called_once()
+
+
+def test_missing_api_key(monkeypatch):
+    monkeypatch.setenv("OPENAI_API_KEY", "")  # Simulate missing API key
+    with pytest.raises(Exception) as e:
+        # Attempt to create an instance of your class here, which should check for the API key
+        # For example, if your class checks for the API key in its __init__ method:
+        OpenAIChat.create("dummy_assistant_id")
+    assert "OPENAI_API_KEY is not set in the environment variables." in str(e.value)
