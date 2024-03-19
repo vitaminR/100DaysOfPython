@@ -17,12 +17,17 @@ data_dict = word_data.to_dict(orient="records")
 # display
 # print(data_dict)
 current_card = {}
+# Shuffle the deck once at the beginning
+random.shuffle(data_dict)
+current_index = 0
 
 
 def next_card():
-    global current_card, flip_timer
+    global current_card, flip_timer, current_index
     root.after_cancel(flip_timer)
-    current_card = random.choice(data_dict)
+    # Get the next card in the shuffled deck
+    current_card = data_dict[current_index]
+    current_index = (current_index + 1) % len(data_dict)
     print(current_card["French"])
     canvas.itemconfig(card_title, text="French:", fill="black")
     canvas.itemconfig(card_word, text=current_card["French"], fill="black")
