@@ -55,10 +55,6 @@ def play_sound(sound_file):
     # Play the sound
     pygame.mixer.music.play()
 
-    # Wait for playback to finish
-    while pygame.mixer.music.get_busy():
-        pygame.time.Clock().tick(10)
-
 
 def next_card():
 
