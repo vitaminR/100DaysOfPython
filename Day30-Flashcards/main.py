@@ -4,13 +4,14 @@ import random  # 1.2 For shuffling data.
 import os  # 1.3 For file path operations.
 from tkinter import *  # 1.4 For GUI creation.
 from PIL import Image, ImageTk  # 1.5 For image handling.
-import simpleaudio as sa  # 1.6 For playing sound.
+import pygame
 
 ### 2. Setting constants ###
 BACKGROUND_COLOR = "#B1DDC6"  # 2.1 Background color for the app.
+# Initialize pygame mixer
+pygame.mixer.init()
 
 
-### 3. Preparing word data ###
 ### 3. Preparing word data ###
 # 3.1 Define a function to load word data from CSV files
 def load_word_data():
@@ -41,31 +42,51 @@ random.shuffle(data_dict)  # 3.6 Shuffle to randomize flashcards
 ### 4. Initializing global variables ###
 current_card = {}  # 4.1 The current flashcard displayed.
 current_index = 0  # 4.2 Index to track the current card position.
+flip_timer = None  # 4.3 Timer for card flipping, initialized to None.
 
 
 ### 5. Function definitions ###
+
+
 def play_sound(sound_file):
-    # 5.1 Function to play sound
-    wave_obj = sa.WaveObject.from_wave_file(sound_file)
-    play_obj = wave_obj.play()
-    play_obj.wait_done()  # Wait until sound has finished playing
+    # Load the sound file
+    pygame.mixer.music.load(sound_file)
+
+    # Play the sound
+    pygame.mixer.music.play()
+
+    # Wait for playback to finish
+    while pygame.mixer.music.get_busy():
+        pygame.time.Clock().tick(10)
 
 
 def next_card():
-    # 5.2 Display the next card
+
     global current_card, current_index, flip_timer
-    if not data_dict:
-        # 5.2.1 If no more cards, show congratulations.
+    if current_index == 0:  # Check if it's the first call to next_card
+        # Display a welcome message
+        canvas.itemconfig(card_title, text="Welcome!", fill="black")
+        canvas.itemconfig(
+            card_word, text="Click the green check to start.", fill="black"
+        )
+        canvas.itemconfig(card_background, image=card_front_img)
+        # Increment current_index to move past the welcome message upon the next call
+        current_index += 1
+    elif not data_dict:  # If no more cards, show congratulations.
         show_congratulations()
-        return
-    if flip_timer:
-        root.after_cancel(flip_timer)
-    current_card = data_dict[current_index]
-    current_index = (current_index + 1) % len(data_dict)
-    canvas.itemconfig(card_title, text="French", fill="black")
-    canvas.itemconfig(card_word, text=current_card["French"], fill="black")
-    canvas.itemconfig(card_background, image=card_front_img)
-    flip_timer = root.after(3000, flip_card)
+    else:
+        if flip_timer is not None:
+            root.after_cancel(flip_timer)  # Cancel the existing timer if it exists.
+        current_card = data_dict[
+            current_index - 1
+        ]  # Adjusted to account for welcome message increment
+        canvas.itemconfig(card_title, text="French", fill="black")
+        canvas.itemconfig(card_word, text=current_card["French"], fill="black")
+        canvas.itemconfig(card_background, image=card_front_img)
+        flip_timer = root.after(
+            3000, flip_card
+        )  # Schedule the flip_card function after 3000 ms.
+        current_index += 1  # Ensure this is incremented to move to the next card
 
 
 def flip_card():
@@ -77,11 +98,12 @@ def flip_card():
 
 def known_word():
     # 5.4 Mark the current word as known and remove from the list
+    print("known_word called")  # Debugging line
     global current_index
     if current_card in data_dict:
         data_dict.remove(current_card)
         pd.DataFrame(data_dict).to_csv("data/words_to_learn.csv", index=False)
-        play_sound("sounds/correct.wav")  # Play sound for correct answer
+        play_sound("sounds/correct.mp3")  # Play sound for correct answer
     if not data_dict:
         show_congratulations()
         return
