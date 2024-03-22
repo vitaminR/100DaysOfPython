@@ -63,7 +63,10 @@ def next_card():
         # Display a welcome message
         canvas.itemconfig(card_title, text="Welcome!", fill="black")
         canvas.itemconfig(
-            card_word, text="Click the green check to start.", fill="black"
+            card_word,
+            text="Click the green check to start.",
+            fill="black",
+            font=("Ariel", 20, "bold"),
         )
         canvas.itemconfig(card_background, image=card_front_img)
         # Increment current_index to move past the welcome message upon the next call
@@ -76,8 +79,15 @@ def next_card():
         current_card = data_dict[
             current_index - 1
         ]  # Adjusted to account for welcome message increment
-        canvas.itemconfig(card_title, text="French", fill="black")
-        canvas.itemconfig(card_word, text=current_card["French"], fill="black")
+        canvas.itemconfig(
+            card_title, text="French", fill="black", font=("Ariel", 45, "italic")
+        )
+        canvas.itemconfig(
+            card_word,
+            text=current_card["French"],
+            fill="black",
+            font=("Ariel", 70, "bold"),
+        )
         canvas.itemconfig(card_background, image=card_front_img)
         flip_timer = root.after(
             3000, flip_card
@@ -87,14 +97,20 @@ def next_card():
 
 def flip_card():
     # 5.3 Flip the card to show the answer
-    canvas.itemconfig(card_title, text="English", fill="white")
-    canvas.itemconfig(card_word, text=current_card["English"], fill="white")
+    canvas.itemconfig(
+        card_title, text="English", fill="white", font=("Ariel", 40, "italic")
+    )
+    canvas.itemconfig(
+        card_word,
+        text=current_card["English"],
+        fill="white",
+        font=("Ariel", 70, "bold"),
+    )
     canvas.itemconfig(card_background, image=card_back_img)
 
 
 def known_word():
     # 5.4 Mark the current word as known and remove from the list
-    print("known_word called")  # Debugging line
     global current_index
     if current_card in data_dict:
         data_dict.remove(current_card)
@@ -110,8 +126,15 @@ def known_word():
 
 def show_congratulations():
     # 5.5 Show congratulations message
-    canvas.itemconfig(card_title, text="Congratulations!", fill="black")
-    canvas.itemconfig(card_word, text="You've learned all the words!", fill="black")
+    canvas.itemconfig(
+        card_title, text="Congratulations!", fill="black", font=("Ariel", 30, "italic")
+    )
+    canvas.itemconfig(
+        card_word,
+        text="You've learned all the words!",
+        fill="black",
+        font=("Ariel", 20, "bold"),
+    )
     canvas.itemconfig(card_background, image=card_front_img)
 
 
