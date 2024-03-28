@@ -2,8 +2,6 @@
 # 1. Importing the Tkinter Library
 # ===========================================
 from tkinter import (
-    LEFT,
-    RIGHT,
     Tk,
     Label,
     Entry,
@@ -15,6 +13,7 @@ from tkinter import (
     Spinbox,
     StringVar,
 )
+
 
 # - 1.1 Imports all necessary widgets and variables from tkinter for building the GUI.
 
