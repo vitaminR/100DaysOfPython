@@ -182,5 +182,5 @@ unk_btn.grid(row=1, column=0)
 next_card()
 
 ### 8. Main event loop ###
-# 8.1 Keep the application window open and responsive.
+# 8.1 Keep the application window open and responsive..
 root.mainloop()
