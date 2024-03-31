@@ -18,9 +18,10 @@ flip_timer = None  # 4.3 Timer for card flipping, initialized to None.
 
 ### 3. Preparing word data ###
 # 3.1 Define a function to load word data from CSV files
+# 3.1 Define a function to load word data from CSV files
 def load_word_data():
     words_to_learn_path = "data/words_to_learn.csv"  # The custom list of words to learn
-    default_data_path = "data/french_words.csv"  # The default dataset
+    default_data_path = "data/japanese_nouns.csv"  # The default dataset
 
     # 3.2 Check if 'words_to_learn.csv' exists and is not empty
     if os.path.exists(words_to_learn_path) and os.path.getsize(words_to_learn_path) > 0:
@@ -57,7 +58,6 @@ def play_sound(sound_file):
 
 
 def next_card():
-
     global current_card, current_index, flip_timer
     if current_index == 0:  # Check if it's the first call to next_card
         # Display a welcome message
@@ -82,13 +82,13 @@ def next_card():
         ]  # Adjusted to account for welcome message increment
         canvas.itemconfig(
             card_title,
-            text="French",
+            text="Japanese",
             fill="#B1DDC6",
             font=("Ariel", 45, "italic"),
         )
         canvas.itemconfig(
             card_word,
-            text=current_card["French"],
+            text=current_card["Japanese"],
             fill="#B1DDC6",
             font=("Ariel", 75, "bold"),
         )
@@ -182,5 +182,5 @@ unk_btn.grid(row=1, column=0)
 next_card()
 
 ### 8. Main event loop ###
-# 8.1 Keep the application window open and responsive.
+# 8.1 Keep the application window open and responsive..
 root.mainloop()

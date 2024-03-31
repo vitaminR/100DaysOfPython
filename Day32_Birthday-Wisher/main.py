@@ -1,6 +1,8 @@
 ###1. Import necessary libraries
 import smtplib
 import socket
+import datetime as dt
+import random
 
 ###2. Define email parameters
 my_email = "nymilitarypolice@gmail.com"
@@ -42,3 +44,13 @@ except smtplib.SMTPAuthenticationError:
 except Exception as e:
     ###3.8 Handle any other SMTP or unforeseen errors
     print(f"An error occurred: {e}")
+
+
+now = dt.datetime.now()
+year = now.year
+month = now.month
+day = now.day
+day_of_week = now.weekday()
+
+print(year, month, day)
+print(day_of_week)
