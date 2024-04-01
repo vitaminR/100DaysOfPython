@@ -1,75 +1,179 @@
-### 1. Import necessary libraries
-import smtplib
-import socket
-import datetime as dt
-import random
-import time  # Import the time module for sleep functionality
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+### main.py ###
 
-### 2. Define email parameters and read quotes
-my_email = "nymilitarypolice@gmail.com"
-their_email = "networkdoctor@live.com"
-password = "bgkw fsho zqhl gkll"  # Use an App Password if 2FA is enabled
+# ==============================================
+# 1. Configuration Section
+# ==============================================
+# This section contains settings for email credentials and file paths.
+
+# 1.1 Email account credentials.
+my_email = "nymilitarypolice@gmail.com"  # Sender's email address.
+password = "bgkw fsho zqhl gkll"  # Sender's email password or app-specific password.
+
+# 1.2 File paths.
+birthday_file = "birthdays.csv"  # Path to the CSV file with birthday data.
+template_folder = "letter_templates"  # Path to the folder containing email templates.
+
+# ==============================================
+# 2. Import Section
+# ==============================================
+# This section imports required libraries for the script's functionality.
+
+import smtplib  # For SMTP protocol to send emails.
+import socket  # To check internet connectivity.
+import datetime as dt  # To work with dates and times.
+import random  # To select a random template.
+import csv  # To handle CSV file operations.
+import os  # To handle file system paths.
+from email.mime.text import MIMEText  # To create text-based email parts.
+from email.mime.multipart import (
+    MIMEMultipart,
+)  # To create multipart/alternative email bodies.
+
+# ==============================================
+# 3. Helper Functions
+# ==============================================
+# These functions perform specific tasks to support the main functionality.
 
 
-def read_quotes(filename="quotes.txt"):
-    with open(filename, "r", encoding="utf-8") as file:
-        quotes = file.readlines()
-    return [quote.strip() for quote in quotes]
-
-
-### 3. Function to send the email
-def send_motivational_email():
+# 3.1 Function to read birthdays from the CSV file.
+def read_birthdays(filename):
+    """Reads birthday data from the given CSV file and returns a list of dictionaries."""
+    birthdays = []
     try:
-        quotes = read_quotes()
-        selected_quote = random.choice(quotes)
+        with open(filename, "r", encoding="utf-8") as file:
+            csv_reader = csv.DictReader(file)
+            birthdays = [row for row in csv_reader]
+    except FileNotFoundError:
+        print(f"The file {filename} was not found. Check the file path.")
+    return birthdays
 
-        ### 3.1 Check Internet connection
-        socket.create_connection(("www.google.com", 80))
-        print("Internet connection successful.")
 
-        ### 3.2 Establish connection to SMTP server
+# 3.2 Function to check for today's birthdays.
+def check_todays_birthdays(birthdays):
+    """Filters and returns birthdays that match today's date."""
+    today = dt.datetime.now()
+    return [
+        bday
+        for bday in birthdays
+        if today.month == int(bday["month"]) and today.day == int(bday["day"])
+    ]
+
+
+# 3.3 Function to retrieve a random letter template.
+def get_random_letter_template(folder):
+    """Selects and returns the content of a random letter template from the specified folder."""
+    templates = [
+        f for f in os.listdir(folder) if os.path.isfile(os.path.join(folder, f))
+    ]
+    selected_template = random.choice(templates)
+    with open(os.path.join(folder, selected_template), "r", encoding="utf-8") as file:
+        content = file.read()
+    return content
+
+
+# 3.4 Function to send an email.
+def send_email(to_email, subject, html_content):
+    """Composes and sends an email with the given subject and HTML content."""
+    try:
+        message = MIMEMultipart("alternative")
+        message["From"] = my_email
+        message["To"] = to_email
+        message["Subject"] = subject
+        part = MIMEText(html_content, "html")
+        message.attach(part)
         with smtplib.SMTP("smtp.gmail.com", 587) as connection:
-            print("Connecting to SMTP server...")
-            connection.starttls()  # Secure the connection
-            print("Connection secured with TLS.")
-
-            ### 3.3 Attempt login
+            connection.starttls()
             connection.login(user=my_email, password=password)
-            print("Logged in successfully.")
-
-            ### 3.4 Create and send the email message with HTML formatting
-            message = MIMEMultipart("alternative")
-            message["From"] = my_email
-            message["To"] = their_email
-            message["Subject"] = "Your Motivational Quote of the Day"
-
-            # HTML Content with a surprise
-            html = f"""\
-            <html>
-              <body>
-                <p>Here's your motivational quote for today:<br>
-                   <blockquote>"{selected_quote}"</blockquote>
-                </p>
-
-              </body>
-            </html>
-            """
-            part = MIMEText(html, "html")
-            message.attach(part)
-
-            ### 3.5 Send the email
             connection.send_message(message)
-            print("Email with a surprise sent successfully.")
-
+            print(f"Email sent to {to_email} successfully.")
     except Exception as e:
-        ### 3.6 Handle any errors that occur during the email sending process
-        print(f"An error occurred: {e}")
+        print(f"An error occurred while sending the email to {to_email}: {e}")
 
 
-### 4. Loop to send the email continuously until manually stopped
-while True:
-    send_motivational_email()
-    print("Waiting for the next iteration...")
-    time.sleep(60)  # Wait for 60 seconds (1 minute) before the next email
+# ==============================================
+# 4. Main Execution Block
+# ==============================================
+# The script's main logic for processing and sending birthday emails.
+
+personalized_content = "Some personalized message for the birthday person."
+
+if __name__ == "__main__":
+    # 4.1 Read all birthday entries from the CSV file.
+    all_birthdays = read_birthdays(birthday_file)
+
+    # 4.2 Check for any birthdays today.
+    birthdays_today = check_todays_birthdays(all_birthdays)
+
+    # 4.3 For each birthday match, send a personalized email.
+    for birthday in birthdays_today:
+        personalized_content = get_random_letter_template(template_folder).replace(
+            "[NAME]", birthday["name"]
+        )
+html_content = f"""
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Happy Birthday!</title>
+                <!-- Styles -->
+                <style>
+                    body {{
+                        font-family: Arial, sans-serif;
+                        margin: 0;
+                        padding: 0;
+                        background-color: #eeeeee;
+                    }}
+                    .email-container {{
+                        max-width: 600px;
+                        margin: 40px auto;
+                        background: white;
+                        border-radius: 8px;
+                        overflow: hidden;
+                        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                    }}
+                    .header {{
+                        background-color: #004aad;
+                        color: white;
+                        padding: 20px 10%;
+                        text-align: center;
+                    }}
+                    .header h1 {{
+                        font-size: 24px;
+                        margin: 0;
+                    }}
+                    .content {{
+                        padding: 20px 10%;
+                        background-color: #ffffff;
+                        line-height: 1.6;
+                        text-align: center;
+                    }}
+                    .content p {{
+                        margin: 20px 0;
+                    }}
+                    .footer {{
+                        font-size: 12px;
+                        text-align: center;
+                        padding: 10px 10%;
+                        background-color: #004aad;
+                        color: white;
+                    }}
+                </style>
+            </head>
+            <body>
+                <div class="email-container">
+                    <div class="header">
+                        <h1>Happy Birthday, {birthday["name"]}!</h1>
+                    </div>
+                    <div class="content">
+                        <p>Dear {birthday["name"]},</p>
+                        <p>{personalized_content}</p>
+                    </div>
+                    <div class="footer">
+                        Sent with love by PyFlow Assistant.
+                    </div>
+                </div>
+            </body>
+            </html>
+        """.strip()
+send_email(birthday["email"], "Happy Birthday!", html_content)
