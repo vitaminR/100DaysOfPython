@@ -90,12 +90,18 @@ def send_email(to_email, subject, html_content):
         print(f"An error occurred while sending the email to {to_email}: {e}")
 
 
+# 3.5 Function to get a random quote.
+def get_random_quote(file_path):
+    """Reads quotes from the given file and returns a random one."""
+    with open(file_path, "r", encoding="utf-8") as file:
+        quotes = file.readlines()
+    return random.choice(quotes).strip()
+
+
 # ==============================================
 # 4. Main Execution Block
 # ==============================================
 # The script's main logic for processing and sending birthday emails.
-
-personalized_content = "Some personalized message for the birthday person."
 
 if __name__ == "__main__":
     # 4.1 Read all birthday entries from the CSV file.
@@ -106,56 +112,69 @@ if __name__ == "__main__":
 
     # 4.3 For each birthday match, send a personalized email.
     for birthday in birthdays_today:
-        personalized_content = get_random_letter_template(template_folder).replace(
+        # 4.3.1 Get a random quote.
+        quote = get_random_quote("./Day32_Birthday-Wisher/quotes.txt")
+
+        # Fetch the email template and replace placeholder with the name.
+        personalized_message = get_random_letter_template(template_folder).replace(
             "[NAME]", birthday["name"]
         )
-html_content = f"""
+
+        # Add the quote to the personalized message.
+        personalized_message += f"\n\nHere is a quote for your birthday:\n{quote}"
+
+        # Replace newlines in the personalized message with HTML line breaks.
+        personalized_content = personalized_message.replace("\n", "<br>")
+
+        # Define the HTML content for the email.
+        html_content = f"""
             <!DOCTYPE html>
             <html lang="en">
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>Happy Birthday!</title>
-                <!-- Styles -->
                 <style>
+                    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
                     body {{
-                        font-family: Arial, sans-serif;
+                        font-family: 'Roboto', sans-serif;
                         margin: 0;
                         padding: 0;
-                        background-color: #eeeeee;
+                        background-color: #101010;
+                        color: #c1c1c1;
                     }}
                     .email-container {{
                         max-width: 600px;
                         margin: 40px auto;
-                        background: white;
-                        border-radius: 8px;
+                        background: linear-gradient(145deg, #1d1d1d, #262626);
+                        border-radius: 12px;
                         overflow: hidden;
-                        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                        box-shadow: 0 0 15px rgba(0,0,0,0.5);
                     }}
                     .header {{
-                        background-color: #004aad;
-                        color: white;
-                        padding: 20px 10%;
+                        padding: 20px;
+                        background: linear-gradient(145deg, #0d47a1, #2196f3);
                         text-align: center;
                     }}
                     .header h1 {{
+                        color: #ffffff;
                         font-size: 24px;
                         margin: 0;
                     }}
                     .content {{
-                        padding: 20px 10%;
-                        background-color: #ffffff;
-                        line-height: 1.6;
+                        padding: 20px;
                         text-align: center;
+                        background-color: #1d1d1d;
                     }}
                     .content p {{
-                        margin: 20px 0;
+                        color: #c1c1c1;
+                        line-height: 1.5;
                     }}
                     .footer {{
                         font-size: 12px;
                         text-align: center;
-                        padding: 10px 10%;
-                        background-color: #004aad;
+                        padding: 10px;
+                        background: #0d47a1;
                         color: white;
                     }}
                 </style>
@@ -166,7 +185,6 @@ html_content = f"""
                         <h1>Happy Birthday, {birthday["name"]}!</h1>
                     </div>
                     <div class="content">
-                        <p>Dear {birthday["name"]},</p>
                         <p>{personalized_content}</p>
                     </div>
                     <div class="footer">
@@ -176,4 +194,6 @@ html_content = f"""
             </body>
             </html>
         """.strip()
-send_email(birthday["email"], "Happy Birthday!", html_content)
+
+        # Send the email.
+        send_email(birthday["email"], "Happy Birthday!", html_content)
