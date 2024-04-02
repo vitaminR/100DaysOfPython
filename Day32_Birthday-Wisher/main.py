@@ -113,7 +113,7 @@ if __name__ == "__main__":
     # 4.3 For each birthday match, send a personalized email.
     for birthday in birthdays_today:
         # 4.3.1 Get a random quote.
-        quote = get_random_quote("./Day32_Birthday-Wisher/quotes.txt")
+        quote = get_random_quote("quotes.txt")
 
         # Fetch the email template and replace placeholder with the name.
         personalized_message = get_random_letter_template(template_folder).replace(
