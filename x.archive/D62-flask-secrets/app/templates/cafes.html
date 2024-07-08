@@ -1,0 +1,29 @@
+{% extends "base.html" %} {% block content %}
+<h1>List of Cafes</h1>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Location</th>
+      <th>Open</th>
+      <th>Close</th>
+      <th>Coffee Rating</th>
+      <th>Wifi Rating</th>
+      <th>Power Rating</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for cafe in cafes %}
+    <tr>
+      <td>{{ cafe.name }}</td>
+      <td><a href="{{ cafe.map_url }}">Maps Link</a></td>
+      <td>{{ cafe.seats }}</td>
+      <td>{{ cafe.coffee_price }}</td>
+      <td>{{ 'Yes' if cafe.has_wifi else 'No' }}</td>
+      <td>{{ 'Yes' if cafe.has_sockets else 'No' }}</td>
+      <td>{{ 'Yes' if cafe.can_take_calls else 'No' }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

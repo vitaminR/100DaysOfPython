@@ -1,0 +1,35 @@
+{% extends "base.html" %} {% block content %}
+<h1>Add a New Cafe</h1>
+<form action="{{ url_for('main.add') }}" method="post">
+  {{ form.hidden_tag() }}
+  <div class="form-group">
+    {{ form.name.label(class="form-label") }} {{ form.name(class="form-control")
+    }}
+  </div>
+  <div class="form-group">
+    {{ form.location.label(class="form-label") }} {{
+    form.location(class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ form.open.label(class="form-label") }} {{ form.open(class="form-control")
+    }}
+  </div>
+  <div class="form-group">
+    {{ form.close.label(class="form-label") }} {{
+    form.close(class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ form.coffee.label(class="form-label") }} {{
+    form.coffee(class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ form.wifi.label(class="form-label") }} {{ form.wifi(class="form-control")
+    }}
+  </div>
+  <div class="form-group">
+    {{ form.power.label(class="form-label") }} {{
+    form.power(class="form-control") }}
+  </div>
+  <button type="submit" class="btn btn-primary">Add Cafe</button>
+</form>
+{% endblock %}
