@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Movie</title>
+  </head>
+  <body>
+    <h1>Edit Movie</h1>
+    <form method="POST" action="{{ url_for('main.edit_movie', id=movie.id) }}">
+      {{ form.hidden_tag() }}
+      <p>
+        {{ form.rating.label }}<br />
+        {{ form.rating() }}
+      </p>
+      <p>
+        {{ form.review.label }}<br />
+        {{ form.review() }}
+      </p>
+      <p>{{ form.submit() }}</p>
+    </form>
+  </body>
+</html>

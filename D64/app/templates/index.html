@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Top Movies</title>
+  </head>
+  <body>
+    <h1>Top Movies</h1>
+    <a href="{{ url_for('main.add_movie') }}">Add a new movie</a>
+    <table border="1">
+      <tr>
+        <th>Title</th>
+        <th>Director</th>
+        <th>Year</th>
+        <th>Rating</th>
+        <th>Review</th>
+        <th>Actions</th>
+      </tr>
+      {% for movie in movies %}
+      <tr>
+        <td>{{ movie.title }}</td>
+        <td>{{ movie.director }}</td>
+        <td>{{ movie.year }}</td>
+        <td>{{ movie.rating }}</td>
+        <td>{{ movie.review }}</td>
+        <td>
+          <a href="{{ url_for('main.edit_movie', id=movie.id) }}">Edit</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </body>
+</html>
